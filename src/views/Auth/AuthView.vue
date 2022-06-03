@@ -63,8 +63,8 @@
                         v-model="passwd">
                     </v-text-field>
                     <v-text-field 
-                        label="Comfirm" 
-                        v-model="comfirm">
+                        label="Confirm" 
+                        v-model="confirm">
                     </v-text-field> 
                     <v-btn
                         class="mx-auto mt-6 white--text"
@@ -88,9 +88,10 @@ import Vue from 'vue'
 export default {
     name: 'AuthView',
     data: () => ({
-        user:Vue.prototype.USER,
+        user:Vue.prototype.$USER,
         userid:'',
         passwd:'',
+        confirm:'',
         loader:null,
         loading:false,
     }),
@@ -107,23 +108,25 @@ export default {
             this.$http.post('/api/signin',
                     this.passwd,
                     {headers:{
-                        'Content-Type': 'multipart/form-data',
-                        'Function': 'signin',
-                        'Userid':this.userid
+                        'content-type': 'multipart/form-data',
+                        'function': 'signin',
+                        'userid':this.userid
                     }}
                 )
                 .then(res => {
                     if(res.data!="NO_ERROR"){
                         alert(res.data);
-                        localStorage.removeItem('Status');
+                        //localStorage.removeItem('Status');
                         return;
                     }
                     var token = res.headers["token"];
-                    localStorage.setItem("Userid",this.userid);
-                    localStorage.setItem("Token",token);
+                    localStorage.setItem("userid",this.userid);
+                    localStorage.setItem("token",token);
+                    this.init();
                     console.log(localStorage);
-                    localStorage.setItem('Next','');
-                    localStorage.setItem('Status','True');
+                    this.$router.push('/home/overview');
+                    //localStorage.setItem('Next','');
+                    //localStorage.setItem('Status','True');
                 })
                 .catch(err =>{
                     console.log(err);
@@ -131,6 +134,14 @@ export default {
                         alert("ACCESS_DENIED");
                     }
                 })
+        },
+        signup:function(){
+            console.log('Sign up');
+        },
+        init:function(){
+            this.$getUser();
+            this.$tableInit();
+            this.$getTable();
         }
     },
 }

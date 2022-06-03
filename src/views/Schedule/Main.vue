@@ -27,17 +27,17 @@ import Vue from 'vue'
 export default {
   name: 'ScheduleMain',
   data: () => ({
-        today:'',
+        today:'2022-01-01',
         events: [],
     }),
     methods: {
          
     },
     mounted () {
-      this.$refs.calendar.scrollToTime('07:00')
+      this.$refs.calendar.scrollToTime('07:30')
     },
     created(){
-        this.today = Vue.prototype.$today;
+        this.today=Vue.prototype.$getToday();
     }
 }
 </script>

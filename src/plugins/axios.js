@@ -52,7 +52,13 @@ function PostWithToken(Url,Val,Param,Function,NoErrFuncton,ErrFunction,ExpFuncti
     })
     .catch(err => {
         console.log(err);
-        ExpFunction(err);
+        if(err.status == 401){
+            alert("ACCESS_DENIED");
+            this.$router.push('/auth');
+            //localStorage.setItem('Next','Sql');
+        }else{
+            ExpFunction(err);
+        }
     });
 }
 /*

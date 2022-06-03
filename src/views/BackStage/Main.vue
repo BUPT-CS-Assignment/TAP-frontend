@@ -152,7 +152,7 @@ export default {
             this.name='';
             this.$get('/api/sql','','list',(res)=>{
                 this.tablelist = res.data.list;
-            },()=>{},this.SqlExpFunction)
+            },()=>{},(res)=>{alert(res.status)})
             
         },
 
@@ -165,7 +165,7 @@ export default {
                 for(var i=0;i<values.length;i++){
                     this.detail.push(values[i].split(","));
                 }
-            },()=>{},this.SqlExpFunction);
+            },()=>{},(res)=>{alert(res.status)});
             
         },
 
@@ -182,15 +182,6 @@ export default {
                 
             },()=>{},this.SqlExpFunction);*/
         },
-
-        SqlExpFunction(err){
-            if(err.status == 401){
-                alert("ACCESS_DENIED");
-                localStorage.setItem('Next','Sql');
-            }else{
-                alert(err.status);
-            }
-        }
     },
 }
 </script>
