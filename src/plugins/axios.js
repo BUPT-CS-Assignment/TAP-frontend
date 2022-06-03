@@ -12,10 +12,10 @@ function GetWithToken(Url,Param,Function,NoErrFunction,ErrFunction,ExpFunction){
     axios.get(Url,{
         params:Param,
         headers:{
-            'Content-type': 'multipart/form-data',
-            'Function': Function,
-            'Token':localStorage.getItem('Token'),
-            'Userid':localStorage.getItem('Userid')
+            'content-type': 'multipart/form-data',
+            'function': Function,
+            'token':localStorage.getItem('token'),
+            'userid':localStorage.getItem('userid')
         }
     })
     .then(res => {
@@ -36,10 +36,10 @@ function PostWithToken(Url,Val,Param,Function,NoErrFuncton,ErrFunction,ExpFuncti
     axios.post(Url,Val,{
         params:Param,
         headers:{
-            'Content-type': 'multipart/form-data',
-            'Function': Function,
-            'Token':localStorage.getItem('Token'),
-            'Userid':localStorage.getItem('Userid')
+            'content-type': 'multipart/form-data',
+            'function': Function,
+            'token':localStorage.getItem('token'),
+            'userid':localStorage.getItem('userid')
         }
     })
     .then(res => {

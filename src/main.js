@@ -21,16 +21,29 @@ function getToday(){
     return format;
 }
 Vue.prototype.$today=getToday();
-var user={
-    id:10000,
-    name:'name',
-    gender:'gender',
-    school:'school',
-    major:'major',
-    classid:'class'
-}
-Vue.prototype.USER=user
 
+var user={
+    id:2022000000,
+    name:'测试用户',
+    auth:'0',
+    email:'test@noui.cloud',
+    gender:'女',
+    school:'测试学院',
+    major:'测试专业',
+    classid:'2022111000'
+}
+var timetable={
+    table:[],
+    detail:[],
+}
+var introduction={
+    school:'School Introduction',
+    major:'Major Introduction',
+    classid:'Class Introduction',
+}
+Vue.prototype.$USER=user
+Vue.prototype.$TABLE=timetable
+Vue.prototype.$INTRO=introduction
 new Vue({
   vuetify,
   router,

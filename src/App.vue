@@ -1,46 +1,47 @@
 <template>
 <v-app id="root"> 
+<!-- Side Bar -->
     <template v-if='cur_link != 4'>
     <v-navigation-drawer 
-        class="d-flex flex-column pt-4 "
-        permanent
+        class="d-none d-sm-none d-md-flex"
         app
     >
-        <v-list-item class="ml-3 mb-2">
-            <v-list-item-title 
-                class="text-button font-weight-black"
-            >TINY & PRETTY
+        <v-list-item class="ml-4 mb-2 mt-1">
+            <v-icon color="grey darken-3">
+                mdi-alpha-t-box
+            </v-icon>
+            <v-list-item-title  class="grey--text text--darken-3 text-h5 font-weight-bold">
+                Tiny&Pretty
             </v-list-item-title>
         </v-list-item>
         
         <v-list dense nav>
-            <v-list-item class="mb-0 ml-1 mr-1">
+            <v-list-item class="my-0 py-0 mx-3">
                 <v-text-field
                     outlined
                     prepend-inner-icon="mdi-magnify"
                     label="搜索"
                     dense
-                    class="mb-0"
                     color="grey"
+                    class="mb-0 pb-0"
                 ></v-text-field>
             </v-list-item>
             <v-list-item-group
-                color="blue-grey lighten" 
-                class="mt-0"  
+                color="grey darken-2"
             >
                 <template   v-for="([text,to,icon,color],index) in links">
                 <v-list-item    v-if="index!=4"
                     :key="text"
                     :to="to"
                     link
-                    class="ml-2 mr-2 mb-1"
+                    class="mx-5 mb-0"
                 >
-                    <v-list-item-icon>
-                        <v-icon v-text="icon" :color="color"></v-icon>
+                    <v-list-item-icon class="mr-2">
+                        <v-icon v-text="icon" :color="color" dense></v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                         <v-list-item-title 
-                            class="text-overline font-weight-bold"
+                            class="text-button font-weight-bold"
                         >{{text}}
                         </v-list-item-title>
                     </v-list-item-content>
@@ -49,13 +50,20 @@
             </v-list-item-group>
             
         </v-list>
+        <v-divider class="mx-7 mt-2"></v-divider>
     </v-navigation-drawer>  
     </template>
+
+
+    
+
+<!-- Top Bar -->
+    <template v-if='cur_link != 4'>
     <v-app-bar
         app
+        elevate-on-scroll
         class="pr-3"
-        color="white"
-        elevation="1"
+        color="#FAFAFA"
         dense
     >
         <v-container 
@@ -69,7 +77,7 @@
                     link
                     outlined
                     max-height=30
-                    class="pl-7 pr-7 text-overline font-weight-bold"
+                    class="pl-4 pr-4 text-overline font-weight-bold"
                 >
                 {{ text }}
                 <v-icon class="ml-3" small>mdi-text-long</v-icon>
@@ -117,6 +125,29 @@
             </v-card>
         </v-menu>
     </v-app-bar>
+    </template>
+
+<!-- Bottom Bar -->
+    <template v-if='cur_link != 4'>
+    <v-bottom-navigation
+        class="d-flex d-sm-flex d-md-none pt-2"
+        shift
+        app
+    >
+        <template   v-for="([text,to,icon,color],index) in links">
+            <v-btn v-if="index!=4"
+                style="background:none;"
+                :key="text"
+                :to="to"
+            >
+                <span class="mt-3 font-weight-bold">{{text}}</span>
+                <v-icon v-text="icon" :color="color"></v-icon>
+            </v-btn>
+        </template>        
+    </v-bottom-navigation>
+    </template>
+
+<!-- Main Page -->
     <v-main style="background-color:#FAFAFA">
         <router-view 
             class="ml-4 mt-2 mr-2"
@@ -130,8 +161,8 @@
     export default {
         name:"app",
         data: () => ({
-        cur_link:1,
-        user:Vue.prototype.USER,
+        cur_link:0,
+        user:Vue.prototype.$USER,
         links: [
             ['主页','/home','mdi-account-circle','blue'],
             ['日程','/schedule','mdi-calendar-check','orange'],

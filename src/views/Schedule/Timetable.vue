@@ -3,7 +3,7 @@
     <v-simple-table
         class="mr-6" 
         fixed-header
-        height="300px"
+        height="500"
     >
         <template v-slot:default>
         <thead>
@@ -30,12 +30,12 @@
         </thead>
         <tbody>
             <tr v-for="(value,index) in table"
-                :key="value"
+                :key="index"
                 class="text-center"
             >
                 <td>第{{index+1}}节</td>
-                <td v-for="(val) in value"
-                    :key="val"
+                <td v-for="(val,index) in value"
+                    :key="index"
                     class="text-center"
                 >
                     {{detail[val].name}}<br>
@@ -58,9 +58,13 @@ export default {
         table:[],
         detail:[],
     }),
+    created(){
+        this.getTable();
+        this.table_init();
+    },
     methods: {
         table_init(res){
-            this.table = Array.from(Array(14),()=>new Int32Array(7));
+            this.table = Array.from(Array(14),()=>new Int32Array(5));
             this.detail = [];
             this.detail.push('');
             res.data.detail.forEach(element => {

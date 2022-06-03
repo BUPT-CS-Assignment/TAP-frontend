@@ -84,9 +84,11 @@
 </template>
 
 <script>
+import Vue from 'vue'
 export default {
     name: 'AuthView',
     data: () => ({
+        user:Vue.prototype.USER,
         userid:'',
         passwd:'',
         loader:null,

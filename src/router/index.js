@@ -6,6 +6,8 @@ import Auth from '../views/Auth/AuthView.vue'
 //import Signin from '../views/Auth/Signin.vue'
 //import Signup from '../views/Auth/Signup.vue'
 
+import BackStage from '../views/BackStage/Main.vue' 
+
 /* Home */
 import HomeMain from '../views/Home/Main.vue'
 import HomeDetail from '../views/Home/Detail.vue'
@@ -27,6 +29,8 @@ Vue.use(VueRouter)
 
 const routes = [
     {path:'/auth',component:Auth},
+    
+    {path:'/backstage',component:BackStage},
 
     {path:'/home/overview',component:HomeMain},
     {path:'/home',redirect:'/home/overview'},
