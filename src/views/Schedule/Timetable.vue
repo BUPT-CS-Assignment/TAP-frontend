@@ -1,5 +1,5 @@
 <template>
-<v-container class="pa-4">
+<v-container class="pa-6">
     <v-simple-table
         class="mr-6" 
         fixed-header

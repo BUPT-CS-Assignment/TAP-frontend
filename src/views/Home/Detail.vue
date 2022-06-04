@@ -1,5 +1,5 @@
 <template>
-<v-container class="pb-16">
+<v-container class="pa-4">
     <div class="text-h4 font-weight-black ml-5 mt-6 mb-1">    
         个人中心    
     </div>
@@ -11,7 +11,7 @@
             width="440px"
             height="300px"
             elevation="0"
-            color="#FAFAFA"
+            color="transparent"
         >
             <p class="text-body-1 font-weight-bold ml-1 my-1">账号信息</p>
             <v-card
@@ -55,7 +55,8 @@
         </v-card>
         <v-card
             width="440px"   height="260px"
-            elevation="0"   color="#FAFAFA"
+            elevation="0"   
+            color="transparent"
         >
             <p class="text-body-1 font-weight-bold ml-1 my-1">院系信息</p>
             <v-card

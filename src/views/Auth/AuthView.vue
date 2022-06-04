@@ -1,36 +1,59 @@
 <template>
-<v-container class="d-flex justify-center align-center ma-auto" height="auto">
+<v-app id="auth">
+<v-main class="bg align-center">
     <v-card
-        class="d-flex justify-center align-center mx-auto mt-10"
-        :elevation="0"
-        width="auto"
+        class=" mx-auto my-auto d-flex flex-row flex-wrap"
+        max-width="800px"
+        elevation="8" style="background:none"
     >
-        <v-img 
-            class=" d-none d-sm-none d-md-flex"
-            src="../../assets/item1.jpg"
-            max-height="400px"
-            max-width="320px"
+    <!-- Img -->
+        <v-card
+            class="d-flex flex-column justify-center rounded-0"
+            width="440px"
+            elevation="0"
+            style="background-color:#F5F5F5"
         >
-        </v-img>
+            <span 
+                class="text-h5 black--text font-weight-black"
+                style="position:absolute;top:30px;left:30px;"
+            >
+                <v-icon 
+                    medium color="black"
+                    class="mr-2 mb-1"
+                >mdi-cube
+                </v-icon>
+                Tiny & Pretty
+            </span>
+            <v-img 
+                class="d-none d-sm-none d-md-flex mx-auto mt-12"
+                src="../../assets/item1.png"
+                max-height="260px"
+                max-width="299px"
+            >
+            </v-img>
+        </v-card>
+
+    <!-- Input -->
         <v-card 
-            class="pa-6 ml-0"
+            class="pa-6 ml-auto rounded-0"
             width="360px"
             height="480px"
+            elevation="0"
         >
             <v-card-title class="text-center justify-center py-6">
                 <h2 class="font-weight-bold text-h4 basil--text">
-                    Tiny & Pretty
+                    Welcome !
                 </h2>
             </v-card-title>
             <v-tabs
-            background-color="transparent"
-            color="basil"
-            centered
+                background-color="transparent"
+                color="black"
+                centered
             >
                 <v-tab :key="0">Sign in</v-tab>
                 <v-tab :key="1">Sign up</v-tab>
                 <v-tab-item :key="0">
-                <v-container class="pa-8">
+                <v-container class="px-12 pt-6">
                     <v-text-field 
                         label="UserID" 
                         v-model="userid">
@@ -41,10 +64,11 @@
                         v-model="passwd">
                     </v-text-field>
                     <v-btn
-                        class="mx-auto white--text"
+                        class="white--text"
                         :loading="loading"
                         :disabled="loading"
                         color="blue accent-2"
+                        outlined rounded
                         @click="signin();loader = 'loading'"
                     >
                     Sign in
@@ -53,7 +77,7 @@
                 </v-tab-item>
 
                 <v-tab-item :key="1">
-                <v-container class="pl-8 pr-8 pt-2">
+                <v-container class="px-12 pt-2">
                     <v-text-field 
                         label="UserID" 
                         v-model="userid">
@@ -67,10 +91,11 @@
                         v-model="confirm">
                     </v-text-field> 
                     <v-btn
-                        class="mx-auto mt-6 white--text"
+                        class="mt-6 white--text"
                         :loading="loading"
                         :disabled="loading"
                         color="blue accent-2"
+                        outlined rounded
                         @click="signup();loader = 'loading'"
                     >
                     Sign up
@@ -80,7 +105,9 @@
             </v-tabs>
         </v-card>  
     </v-card>
-</v-container>
+
+</v-main>
+</v-app>
 </template>
 
 <script>
@@ -148,40 +175,50 @@ export default {
 </script>
 
 <style>
-  .custom-loader {
-    animation: loader 1s infinite;
-    display: flex;
-  }
-  @-moz-keyframes loader {
-    from {
-      transform: rotate(0);
+    #auth{
+        /* background-image:linear-gradient(#4285f4, #d2d5fc);*/
+        background-image: url(../../assets/bg2.png); 
+        background-size: cover;
+        background-position: center center;
     }
-    to {
-      transform: rotate(360deg);
+    .bg{
+        background-color:rgba(0,0,0,0.1);
+        /* backdrop-filter:blur(100px); */
     }
-  }
-  @-webkit-keyframes loader {
-    from {
-      transform: rotate(0);
+    .custom-loader {
+        animation: loader 1s infinite;
+        display: flex;
     }
-    to {
-      transform: rotate(360deg);
+    @-moz-keyframes loader {
+        from {
+        transform: rotate(0);
+        }
+        to {
+        transform: rotate(360deg);
+        }
     }
-  }
-  @-o-keyframes loader {
-    from {
-      transform: rotate(0);
+    @-webkit-keyframes loader {
+        from {
+        transform: rotate(0);
+        }
+        to {
+        transform: rotate(360deg);
+        }
     }
-    to {
-      transform: rotate(360deg);
+    @-o-keyframes loader {
+        from {
+        transform: rotate(0);
+        }
+        to {
+        transform: rotate(360deg);
+        }
     }
-  }
-  @keyframes loader {
-    from {
-      transform: rotate(0);
+    @keyframes loader {
+        from {
+        transform: rotate(0);
+        }
+        to {
+        transform: rotate(360deg);
+        }
     }
-    to {
-      transform: rotate(360deg);
-    }
-  }
 </style>

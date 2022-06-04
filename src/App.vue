@@ -3,29 +3,28 @@
 <!-- Side Bar -->
     <template v-if='cur_link != 4'>
     <v-navigation-drawer 
-        class="d-none d-sm-none d-md-flex"
+        class="d-none d-sm-none d-md-flex "
         app
     >
-        <v-list-item class="ml-4 mb-2 mt-1">
-            <v-icon color="grey darken-3">
-                mdi-alpha-t-box
-            </v-icon>
-            <v-list-item-title  class="grey--text text--darken-3 text-h5 font-weight-bold">
-                Tiny&Pretty
+        <v-list-item class="mt-12 mr-2 d-flex flex-column align-center">
+            <span class="mx-auto mb-2 grey--text text-caption font-weight-bold">
+                Tiny And Pretty-Client
+            </span>
+            
+            <v-list-item-title class="mx-auto mb-3 black--text text-h5 font-weight-black">
+                <v-icon color="black" class="mb-1 mr-1" medium>
+                    mdi-cube
+                </v-icon>
+                Tiny & Pretty
             </v-list-item-title>
+            <span class="mx-auto grey--text text-caption font-weight-medium">
+                {{today}}
+            </span>
         </v-list-item>
-        
+
+    <v-divider class="mx-8 mt-0 mb-2"></v-divider>
+    
         <v-list dense nav>
-            <v-list-item class="my-0 py-0 mx-3">
-                <v-text-field
-                    outlined
-                    prepend-inner-icon="mdi-magnify"
-                    label="搜索"
-                    dense
-                    color="grey"
-                    class="mb-0 pb-0"
-                ></v-text-field>
-            </v-list-item>
             <v-list-item-group
                 color="grey darken-2"
             >
@@ -48,14 +47,22 @@
                 </v-list-item>
             </template>
             </v-list-item-group>
-            
         </v-list>
-        <v-divider class="mx-7 mt-2"></v-divider>
+
+    <v-divider class="mx-8 mt-2 mb-6"></v-divider>
+
+        <v-list-item class="my-0 py-0 mx-3">
+            <v-text-field
+                outlined
+                prepend-inner-icon="mdi-magnify"
+                label="搜索"
+                dense
+                color="grey darken-1"
+                class="mb-0 pb-0"
+            ></v-text-field>
+        </v-list-item>
     </v-navigation-drawer>  
-    </template>
-
-
-    
+    </template>   
 
 <!-- Top Bar -->
     <template v-if='cur_link != 4'>
@@ -149,9 +156,11 @@
 
 <!-- Main Page -->
     <v-main style="background-color:#FAFAFA">
-        <router-view 
-            class="ml-4 mt-2 mr-2"
-        ></router-view>
+        <v-container fluid class="ma-0 pa-0">
+            <router-view 
+                class="ma-0 pa-0"
+            ></router-view>
+        </v-container>
     </v-main>
 </v-app>
 </template>
@@ -163,8 +172,9 @@
         data: () => ({
         cur_link:0,
         user:Vue.prototype.$USER,
+        today:'2022-01-01',
         links: [
-            ['主页','/home','mdi-account-circle','blue'],
+            ['主页','/home','mdi-account-circle','info'],
             ['日程','/schedule','mdi-calendar-check','orange'],
             ['课程','/courses','mdi-book-multiple','green'],
             ['导航','/map','mdi-map-marker-radius','blue-grey'],
@@ -182,6 +192,7 @@
             var idx = path.indexOf('/');
             if(idx != -1)   path = path.substring(0,idx);
             this.cur_link = this.router_parse(path);
+            this.today=Vue.prototype.$getToday();
         },
         watch:{
             '$route.path':function(to){
