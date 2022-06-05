@@ -3,7 +3,7 @@
 
 <!-- Console -->
     <v-card
-        class="white ma-0 fill-height d-flex flex-column"
+        class="white ma-0 fill-height d-flex flex-column rounded-0"
         style="position:fixed"
         color="white"
         elevation="8"
@@ -80,7 +80,7 @@
                         elevation="0"
                         width="275" height="44"
                     >
-                        <span class="white--text text-subtitle-2 font-weight-bold ma-auto" 
+                        <span class="black--text text-subtitle-2 font-weight-bold ma-auto" 
                         >{{sql.msg}}
                         </span>
                     </v-card>
@@ -90,12 +90,14 @@
         <!-- Value -->
             <v-card
                 style="position: absolute;bottom:20px;top:110px;left:20px"
-                class="rounded-lg d-flex"
+                class="rounded-lg d-flex pa-1 overflow-y-auto"
                 color="white"
                 elevation="0"
                 width="275"
-            ><span class="text-subtitle-2 font-weight-bold ma-auto">
-                {{sql.value}}
+            ><span 
+                class="text-subtitle-2 font-weight-bold ma-auto"
+                style="max-width:240px;word-break:break-all;"
+            >{{sql.value}}
                 </span>
             </v-card>
         </v-card>
@@ -118,19 +120,19 @@
         <v-container d-flex flex-row flex-wrap justify-start class="ml-1">
             <v-card 
                 class="rounded-lg my-2 mr-8"
-                width="200" height="100"
+                width="200" height="70"
             >
                 <v-card-title>User Number</v-card-title>
             </v-card>
             <v-card 
                 class="rounded-lg my-2 mr-8"
-                width="200" height="100"
+                width="200" height="70"
             >
                 <v-card-title>Course Number</v-card-title>
             </v-card>
             <v-card
                 class="rounded-lg my-2"
-                width="200" height="100"
+                width="200" height="70"
             >
                 <v-card-title>Online User</v-card-title>
             </v-card>
@@ -195,8 +197,9 @@
         <v-container class="ml-1 d-flex flex-row justify-start flex-wrap">
         <!-- List -->
             <v-card class="mt-2 my-2 mr-8 pa-2 rounded-lg overflow-auto"
-                max-height="360px"
+                max-height="320px"
                 min-width="240px"
+                max-width="320px"
             >   
                 <v-card-title>
                     <span class="text-h6 font-text-black">
@@ -210,7 +213,9 @@
                     </v-btn>
                 </v-card-title>   
 
-                <v-simple-table class="pa-2" id="tableList">
+                <v-simple-table class="pa-2"
+                    fixed-header height="220px" dense
+                >
                     <thead>
                         <tr>
                             <th class="text-left">Name</th>
@@ -241,8 +246,9 @@
 
         <!-- Detail -->
             <v-card class="mt-2 my-2 pa-2 rounded-lg overflow-auto" 
-                max-height="360px"
+                max-height="320px"
                 min-width="280px"
+                max-width="580px"
             >
                 <v-card-title>
                     <span class="text-h6 font-text-black">
@@ -256,12 +262,14 @@
                     </v-btn>
                 </v-card-title>
 
-                <v-simple-table class="pa-2">
+                <v-simple-table 
+                    class="pa-2" fixed-header height="220px" dense
+                >
                     <thead>
                         <tr>
-                            <th class="text-center">S/N</th>
+                            <th class="text-left">S/N</th>
                             <th v-for="(item,index) in field" :key="index"
-                                class="text-center" 
+                                class="text-left" 
                             >{{item}}
                             </th>
                             <th class="text-center">Option</th>
@@ -367,9 +375,9 @@ export default {
         dir:'/TAP/data',
         sql:{
             req:'',
-            msg:'NO_ERROR',
+            msg:'',
             count:'0',
-            value:'/root',
+            value:'',
         },
         name:'Test',
         field:['field1','field2','field3'],
@@ -379,22 +387,28 @@ export default {
     }),
     created(){
         this.today = Vue.prototype.$getToday();
+        this.getDir();
+        this.getList();
     },
     methods: {
         clearSQL:function(){
-            this.sql.req='',
-            this.sql.msg='NO_ERROR',
-            this.sql.count=0,
-            this.sql.value='/root'
+            //this.sql.req='',
+            this.sql.msg='',
+            this.sql.count='0',
+            this.sql.value=''
         },
 
         sendSQL:function(){
             this.$post('/api/sql',this.sql.req,'','run',(res)=>{
-                this.Clear();
-                this.sql.msg = res.data.msg;
-                this.sql.count = res.data.count;
-                this.sql.val = res.data.retVal; 
-            },()=>{},(res)=>{alert(res.status)});
+                this.clearSQL();
+                this.sql.msg = res.headers.msg;
+                this.sql.count = res.data.count+'';
+                this.sql.value = res.data.retVal; 
+            },(res)=>{
+                this.sql.msg = res.headers.msg;
+                this.sql.count = '0';
+                this.sql.value = 'UNEXPECTED REQUEST'; 
+            },(res)=>{alert(res.status)});
         },
 
         getList:function(){
@@ -409,6 +423,7 @@ export default {
             this.$get('/api/sql',{table:tablename},'detail',(res)=>{
                 this.name = res.data.name;
                 this.field = res.data.field.split(",");
+                this.input.data_detail=[];
                 for(var i=0; i < this.field.length;i++){
                     var obj={val:''}
                     this.input.data_detail.push(obj);
@@ -440,13 +455,21 @@ export default {
             var index=this.mod_line;
             var cmd = this.name+';'+this.field[0]+'='+this.detail[index][0]+';';
             for(var i = 1;i<this.field.length;i++){
-                cmd += this.field[i]+'='+this.detail[index][i]+ (i==this.field.length-1?'':' , ');
+                this.input.data_detail[i].val=this.input.data_detail[i].val.trim();
+                var str = this.input.data_detail[i].val;
+                if(str.length==0) str=this.detail[index][i];
+                cmd += this.field[i]+'='+str+ (i==this.field.length-1?'':' , ');
             }
             confirm('Change Confirm') && (
                 this.$post('/api/sql',cmd,'','update',()=>{
                     for(i = 1;i<this.field.length;i++){
+                        if(this.input.data_detail[i].val.length==0){
+                            this.input.data_detail[i].val = this.detail[index][i];
+                        }
                         this.detail[index][i]=this.input.data_detail[i].val;
                     }
+                    alert('Change Success');
+                    this.dialog.value_set=false;
                 },()=>{},this.SqlExpFunction)
             )
 
@@ -463,7 +486,15 @@ export default {
         },
 
         refresh:function(){
+            this.getDir();
             this.getList();
+        },
+
+        getDir:function(){
+            var request = '.dir;';
+            this.$post('/api/sql',request,'','run',(res)=>{
+                this.dir=res.data.retVal;
+            },()=>{alert('Dir Change Failed')},(res)=>{alert(res.status)});
         },
 
         changeDir:function(){

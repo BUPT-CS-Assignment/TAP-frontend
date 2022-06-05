@@ -24,8 +24,9 @@
                 </v-icon>
                 Tiny & Pretty
             </span>
+            <!-- d-none d-sm-none d-md-flex -->
             <v-img 
-                class="d-none d-sm-none d-md-flex mx-auto mt-12"
+                class="mx-auto mt-12"
                 src="../../assets/item1.png"
                 max-height="260px"
                 max-width="299px"
@@ -61,6 +62,7 @@
                     <v-text-field 
                         class="mb-6"
                         label="Password" 
+                        type="password"
                         v-model="passwd">
                     </v-text-field>
                     <v-btn

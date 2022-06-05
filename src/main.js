@@ -90,10 +90,16 @@ function getToday(){
     return format;
 }
 
+function Signout(){
+    localStorage.removeItem('userid');
+    localStorage.removeItem('token');
+}
+
 Vue.prototype.$getToday=getToday;
 Vue.prototype.$getUser=getUser;
 Vue.prototype.$getTable=getTable;
 Vue.prototype.$tableInit=tableInit;
+Vue.prototype.$signout=Signout;
 
 
 new Vue({

@@ -197,6 +197,7 @@
             <v-btn
                 class="ml-6"
                 color="success"
+                @click="Signout()"
             >退出
             </v-btn>
         </v-container>
@@ -224,5 +225,11 @@ export default {
             max: v => v.length <=16 || '密码长度超限',
         }
     }),
+    methods: {
+        Signout:function(){
+            Vue.prototype.$signout();
+            this.$router.push('/auth');
+        },
+    },
 }
 </script>

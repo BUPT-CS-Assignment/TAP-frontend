@@ -7,7 +7,7 @@ module.exports = defineConfig({
         host: '0.0.0.0',
         port: 8080,
         client: {
-            webSocketURL: 'ws://101.43.201.20:8080/ws',
+            webSocketURL: 'ws://0.0.0.0:8080/ws',
         },
         proxy: {//增加一个api的前缀
             '/api': {

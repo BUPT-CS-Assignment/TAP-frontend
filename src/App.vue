@@ -124,8 +124,8 @@
                     rounded
                     depressed
                     text
-                >
-                    退出
+                    @click="Signout()"
+                >退出
                 </v-btn>
                 </div>
             </v-list-item-content>
@@ -211,7 +211,11 @@
                     case 'map':return 3;
                     default: return 4;
                 }
-            }
+            },
+            Signout:function(){
+                Vue.prototype.$signout();
+                this.$router.push('/auth');
+            },
         },
     }
 </script>
