@@ -15,7 +15,7 @@ Vue.prototype.$server=ROOT;
 
 var user={
     id:2022000000,
-    auth:'0',
+    auth:0,
     name:'测试用户',
     email:'test@noui.cloud',
     gender:'女',
@@ -95,11 +95,28 @@ function Signout(){
     localStorage.removeItem('token');
 }
 
+function Access(level = '0'){
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET','/api/access',false);
+    xhttp.setRequestHeader('content-type','multipart/form-data');
+    xhttp.setRequestHeader('function',level+'');
+    xhttp.setRequestHeader('userid',localStorage.getItem('userid'));
+    xhttp.setRequestHeader('token',localStorage.getItem('token'));
+    xhttp.send();
+    if(xhttp.status == 200){
+        console.log(xhttp.responseText);
+        if(xhttp.responseText.data == "NO_ERROR");
+        return true;
+    }
+    return false;
+}
+
 Vue.prototype.$getToday=getToday;
 Vue.prototype.$getUser=getUser;
 Vue.prototype.$getTable=getTable;
 Vue.prototype.$tableInit=tableInit;
 Vue.prototype.$signout=Signout;
+Vue.prototype.$access=Access;
 
 
 new Vue({

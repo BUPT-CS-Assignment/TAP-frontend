@@ -154,7 +154,7 @@
                 class="ml-auto my-auto pa-0"
                 style="background:none"
                 elevation="0" 
-                max-width="120px"
+                max-width="180px"
             >
                 <v-dialog v-model="dialog.dir_set" persistent max-width="400px">
                     <template v-slot:activator="{on,attrs}">
@@ -186,9 +186,14 @@
                     </v-card>
                 </v-dialog>
                 <v-btn
-                    small rounded outlined color="orange"
+                    small rounded outlined color="orange" class="mr-2"
                     @click="refresh()"
                 ><v-icon small>mdi-refresh</v-icon>
+                </v-btn>
+                <v-btn
+                    small rounded outlined color="blue-grey"
+                    @click="Signout()"
+                ><v-icon small>mdi-export</v-icon>
                 </v-btn>
             </v-card>
         </v-card>
@@ -381,11 +386,14 @@ export default {
         },
         name:'Test',
         field:['field1','field2','field3'],
-        detail:[['Data1-1','Data1-2','Data1-3'],
-                ['Data2-1','Data2-2','Data2-3']],
+        detail:[['NULL','NULL','NULL']],
         mod_line:0,
     }),
     created(){
+        if(!this.$access('3')){
+            console.log("ACCESS_DENIED");
+            this.$router.push('/auth');
+        }
         this.today = Vue.prototype.$getToday();
         this.getDir();
         this.getList();
@@ -503,6 +511,11 @@ export default {
                 this.dir=this.input.dir_set;
                 this.dialog.dir_set=false;
             },()=>{alert('Dir Change Failed')},(res)=>{alert(res.status)});
+        },
+
+        Signout:function(){
+            Vue.prototype.$signout();
+            this.$router.push('/auth');
         },
     },
     mounted() {

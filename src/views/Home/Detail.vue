@@ -225,6 +225,9 @@ export default {
             max: v => v.length <=16 || '密码长度超限',
         }
     }),
+    created() {
+
+    },
     methods: {
         Signout:function(){
             Vue.prototype.$signout();

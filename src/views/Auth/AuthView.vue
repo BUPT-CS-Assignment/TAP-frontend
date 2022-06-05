@@ -143,6 +143,7 @@ export default {
                     }}
                 )
                 .then(res => {
+                    console.log(res);
                     if(res.data!="NO_ERROR"){
                         alert(res.data);
                         //localStorage.removeItem('Status');
@@ -152,10 +153,11 @@ export default {
                     localStorage.setItem("userid",this.userid);
                     localStorage.setItem("token",token);
                     this.init();
-                    console.log(localStorage);
-                    this.$router.push('/home/overview');
-                    //localStorage.setItem('Next','');
-                    //localStorage.setItem('Status','True');
+                    if(this.userid==10000 || Vue.prototype.$USER.auth==3){
+                        this.$router.push('/backstage');
+                    }else{
+                        this.$router.push('/home/overview');
+                    }
                 })
                 .catch(err =>{
                     console.log(err);

@@ -11,5 +11,8 @@ export default {
     data: () => ({
         user:Vue.prototype.$USER,
     }),
+    created() {
+
+    },
 }
 </script>
