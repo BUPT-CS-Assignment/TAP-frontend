@@ -150,10 +150,11 @@ export default {
                         return;
                     }
                     var token = res.headers["token"];
+                    console.log(token);
                     localStorage.setItem("userid",this.userid);
                     localStorage.setItem("token",token);
                     this.init();
-                    if(this.userid==10000 || Vue.prototype.$USER.auth==3){
+                    if(this.$USER.auth == 3){
                         this.$router.push('/backstage');
                     }else{
                         this.$router.push('/home/overview');

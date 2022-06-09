@@ -107,7 +107,9 @@
     <v-main class="main align-self-start pa-4 fill-height" 
         style="position:absolute;top:0;right:0;left:360px"   
     >
-    <v-container class="d-flex flex-column flex-wrap">
+
+<!-- Head -->
+    <v-container class="d-flex flex-column ">
     <!-- Header -->
         <span class="mt-2 ml-4 text-h5 font-weight-bold">
             BackStage
@@ -115,7 +117,7 @@
         <span class="mt-0 ml-4 text-caption grey--text font-weight-medium">
             Tiny And Pretty Control Center @ NoUITeam
         </span>
-
+    
     <!-- Data -->
         <v-container d-flex flex-row flex-wrap justify-start class="ml-1">
             <v-card 
@@ -137,74 +139,85 @@
                 <v-card-title>Online User</v-card-title>
             </v-card>
         </v-container>
+    </v-container>
 
     <v-divider class="mx-4 my-2"></v-divider>
 
-    <!-- Directory -->
-        <v-card
-            height="50"
-            class="mt-4 ml-4 mr-16 d-flex flex-row rounded-lg pa-2 pr-6"
-        >
-            <v-icon class="ml-2 my-auto mr-2"
-                small color="indigo"
-            >mdi-puzzle</v-icon>
-            <span class="my-auto text-button indigo--text">Current Dir</span>
-            <span class="my-auto ml-6 text-body-2 font-weight-bold">{{dir}}</span>
-            <v-card 
-                class="ml-auto my-auto pa-0"
-                style="background:none"
-                elevation="0" 
-                max-width="180px"
-            >
-                <v-dialog v-model="dialog.dir_set" persistent max-width="400px">
-                    <template v-slot:activator="{on,attrs}">
-                        <v-btn
-                            small rounded outlined color="info"
-                            class="mr-2"
-                            v-bind="attrs" v-on="on"
-                        ><v-icon small>mdi-cog</v-icon>
-                        </v-btn>
-                    </template>
-                    <v-card class="px-2 pt-6 pb-2 rounded-lg">
-                        <v-card-title class="text-h5"> Change Current Dir </v-card-title>
-                        <v-container fluid class="px-6">
-                            <v-text-field :value="input.dir_set" :label="dir"></v-text-field>
-                        </v-container>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn
-                                color="blue darken-1" text
-                                @click="dialog.dir_set=false"
-                            >Cancel
-                            </v-btn>
-                            <v-btn
-                                color="blue darken-1 font-weight-bold" text
-                                @click="changeDir();"
-                            >Change
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-                <v-btn
-                    small rounded outlined color="orange" class="mr-2"
-                    @click="refresh()"
-                ><v-icon small>mdi-refresh</v-icon>
-                </v-btn>
-                <v-btn
-                    small rounded outlined color="blue-grey"
-                    @click="Signout()"
-                ><v-icon small>mdi-export</v-icon>
-                </v-btn>
-            </v-card>
-        </v-card>
-
+<!-- Operator -->
+    <v-card class="ma-6 pa-0 d-flex flex-row" 
+        style="background:none;"
+        elevation="0"
+    >
     <!-- Table -->
-        <v-container class="ml-1 d-flex flex-row justify-start flex-wrap">
+        <v-card 
+            class="d-flex flex-column align-self-start justify-start"
+            style="background:none;"
+            elevation="0"
+            max-width="320"
+        >
+            <v-card class="mt-1 d-flex flex-row flex-wrap rounded-lg px-2 pb-2"
+                min-height="130" width="320"
+            >
+                <v-card-title class="mt-2 mx-0 pa-0 text-overline font-weight-bold indigo--text">
+                        <v-icon class="mx-2 mb-0"
+                            small color="indigo"
+                        >mdi-puzzle</v-icon>
+                    Current Dir
+                </v-card-title>
+                <v-container fluid>
+                    <span class="mx-auto text-body-2 font-weight-bold">{{dir}}</span>
+                </v-container>
+                
+                <v-card 
+                    class="mx-auto my-auto pa-0"
+                    style="background:none"
+                    elevation="0" 
+                    max-width="180px"
+                >
+                    <v-dialog v-model="dialog.dir_set" persistent max-width="400px">
+                        <template v-slot:activator="{on,attrs}">
+                            <v-btn
+                                small rounded outlined color="info"
+                                class="mr-2"
+                                v-bind="attrs" v-on="on"
+                            ><v-icon small>mdi-cog</v-icon>
+                            </v-btn>
+                        </template>
+                        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+                            <v-card-title class="text-h5"> Change Current Dir </v-card-title>
+                            <v-container fluid class="px-6">
+                                <v-text-field v-model="input.dir_set" :label="dir"></v-text-field>
+                            </v-container>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    color="blue darken-1" text
+                                    @click="dialog.dir_set=false"
+                                >Cancel
+                                </v-btn>
+                                <v-btn
+                                    color="blue darken-1 font-weight-bold" text
+                                    @click="changeDir();"
+                                >Change
+                                </v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                    <v-btn
+                        small rounded outlined color="orange" class="mr-2"
+                        @click="refresh()"
+                    ><v-icon small>mdi-refresh</v-icon>
+                    </v-btn>
+                    <v-btn
+                        small rounded outlined color="blue-grey"
+                        @click="Signout()"
+                    ><v-icon small>mdi-export</v-icon>
+                    </v-btn>
+                </v-card>
+            </v-card>
         <!-- List -->
-            <v-card class="mt-2 my-2 mr-8 pa-2 rounded-lg overflow-auto"
-                max-height="320px"
-                min-width="240px"
-                max-width="320px"
+            <v-card class="mt-4 mb-6 pa-2 rounded-lg overflow-auto"
+                width="320px"
             >   
                 <v-card-title>
                     <span class="text-h6 font-text-black">
@@ -214,12 +227,13 @@
                         class="white--text font-weight-bold"
                         rounded  small color="success" outlined
                         style="position:absolute;right:35px;top:25px"
+                        @click="dialog.table_add = true"
                     ><v-icon small>mdi-plus-thick</v-icon>
                     </v-btn>
                 </v-card-title>   
 
                 <v-simple-table class="pa-2"
-                    fixed-header height="220px" dense
+                    fixed-header dense
                 >
                     <thead>
                         <tr>
@@ -248,106 +262,219 @@
                     </tbody>
                 </v-simple-table>
             </v-card>
+        </v-card>
 
-        <!-- Detail -->
-            <v-card class="mt-2 my-2 pa-2 rounded-lg overflow-auto" 
-                max-height="320px"
-                min-width="280px"
-                max-width="580px"
-            >
-                <v-card-title>
-                    <span class="text-h6 font-text-black">
-                        Detail of {{name}}
-                    </span>
-                    <v-btn
-                        class="white--text font-weight-bold"
-                        rounded  small color="success" outlined
-                        style="position:absolute;right:35px;top:25px"
-                    ><v-icon small>mdi-plus-thick</v-icon>
-                    </v-btn>
-                </v-card-title>
+    <!-- Detail -->
+        <v-card class="ml-6 mt-1 mb-6 pa-2 rounded-lg overflow-auto">
+            <v-card-title>
+                <span class="text-h6 font-text-black">
+                    Detail of {{name}}
+                </span>
+                <v-btn
+                    class="white--text font-weight-bold"
+                    rounded  small color="success" outlined
+                    style="position:absolute;right:35px;top:25px"
+                    @click="dialog.table_add = true"
+                ><v-icon small>mdi-plus-thick</v-icon>
+                </v-btn>
+            </v-card-title>
 
-                <v-simple-table 
-                    class="pa-2" fixed-header height="220px" dense
-                >
-                    <thead>
-                        <tr>
-                            <th class="text-left">S/N</th>
-                            <th v-for="(item,index) in field" :key="index"
-                                class="text-left" 
-                            >{{item}}
-                            </th>
-                            <th class="text-center">Option</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(value,index) in detail" :key="index">
-                            <td>{{index}}</td>
-                            <td v-for="(item,idx) in value" :key="idx">
-                                {{item}}
-                            </td>
-                            <td>
-                                <v-btn
-                                    class="ma-1"
-                                    rounded small color="info" outlined
-                                    @click="pre_setValue(index)"
-                                ><v-icon small>mdi-pencil</v-icon>
-                                </v-btn>
-                                <v-btn
-                                    class="ma-1"
-                                    rounded small color="error" outlined
-                                    @click="delValue(value[0],index)"
-                                ><v-icon small>mdi-delete-forever</v-icon>
-                                </v-btn>
-                            </td>
-                        </tr>
-                    </tbody>
-                </v-simple-table>
-            </v-card>
-        </v-container>
-        
+            <v-simple-table  class="pa-2" fixed-header  dense>
+                <thead>
+                    <tr>
+                        <th class="text-left">S/N</th>
+                        <th v-for="(item,index) in field" :key="index"
+                            class="text-left" 
+                        >{{item}}
+                        </th>
+                        <th class="text-center">Option</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(value,index) in detail" :key="index">
+                        <td>{{index}}</td>
+                        <td v-for="(item,idx) in value" :key="idx">
+                            {{item}}
+                        </td>
+                        <td>
+                            <v-btn
+                                class="ma-1"
+                                rounded small color="info" outlined
+                                @click="mod_line=index;dialog.value_set=true;"
+                            ><v-icon small>mdi-pencil</v-icon>
+                            </v-btn>
+                            <v-btn
+                                class="ma-1"
+                                rounded small color="error" outlined
+                                @click="delValue(value[0],index)"
+                            ><v-icon small>mdi-delete-forever</v-icon>
+                            </v-btn>
+                        </td>
+                    </tr>
+                </tbody>
+            </v-simple-table>
+        </v-card>
 
-        <v-dialog v-model="dialog.value_set" persistent max-width="600px">
-            <v-card class="px-2 pt-6 pb-2 rounded-lg">
-                <v-card-title class="text-h5">Modify Value</v-card-title>
-                <v-container fluid class="px-6">
+    </v-card>
+
+<!-- Dialog -->
+    <!-- Add Table -->
+    <v-dialog v-model="dialog.table_add" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5">
+                Add Table
+                <v-btn class="ml-auto" rounded small color="error" outlined
+                    @click="dialog.field_add = true"
+                >New Field
+                </v-btn>
+            </v-card-title>
+            <v-container fluid class="px-6 pb-0 mb-0">
+                <v-col>
                     <v-row>
-                        <v-col  v-for="(item,index) in input.data_detail" 
-                            :key="index" 
-                            cols="6"  sm="4" 
-                        >
-                            <v-text-field v-if="index==0" 
-                                outlined dense
-                                readonly
-                                :value="detail[mod_line][0]"
-                            ></v-text-field>
-                            <v-text-field v-if="index!=0" 
-                                outlined dense
-                                v-model="item.val"
-                                :label="field[index]"
-                                :placeholder="detail[mod_line][index]"
-                            >
-                            </v-text-field>
-                        </v-col>
+                        <v-text-field outlined dense label = "Directory"
+                            v-model = "input.dir_set" :rules="[rules.required]"
+                        ></v-text-field>
                     </v-row>
-                </v-container>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                        color="blue darken-1" text
-                        @click="dialog.value_set=false"
-                    >Cancel
-                    </v-btn>
-                    <v-btn
-                        color="blue darken-1 font-weight-bold" text
-                        @click="setValue();"
-                    >Change
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+                    <v-row>
+                        <v-text-field outlined dense label="Table Name"
+                            v-model="input.table_name" :rules="[rules.required]"
+                        ></v-text-field>
+                        <v-combobox outlined dense label="Table Size (400 as defalut)" class="ml-3"
+                            v-model="input.table_size"
+                            :items="table_size_items"
+                        ></v-combobox>
+                    </v-row>
+                </v-col>
+            </v-container>
+            <v-container d-flex flex-row flex-wrap class="px-6">
+                <v-card  v-for="(item,index) in input.table_field" :key = "index"
+                    elevation="0" style="background: none;"
+                ><v-chip v-if="item.show" close outlined
+                        class="ma-2 green--text font-weight-bold"
+                        @click:close="item.show = false"
+                    ><v-icon color="green" class="mr-1">mdi-tag-multiple</v-icon>
+                    {{item.name}} {{item.type}}
+                    </v-chip>
+                </v-card>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="dialog.table_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="addTable();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 
-    </v-container>   
+    <!-- Add Field -->
+    <v-dialog v-model="dialog.field_add" persistent max-width="300px">
+        <v-card class="px-6 pt-4 pb-2 rounded-lg">
+            <v-card-title class="text-h5 mb-2">New Field</v-card-title>
+            <v-col>
+                <v-row>
+                    <v-text-field v-model = "input.field.name"
+                        outlined dense label = "Field Name"
+                        :rules="[rules.required]"
+                    ></v-text-field>
+                </v-row>
+                <v-row>
+                    <v-combobox v-model="input.field.type"
+                        :items="field_type_items"
+                        outlined dense label="Field Type"
+                    ></v-combobox>
+                </v-row>
+            </v-col>
+            <v-card-actions><v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="dialog.field_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="addField();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Add Value -->
+    <v-dialog v-model="dialog.value_add" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5">Add Value</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row>
+                    <v-col  v-for="(item,index) in input.data_detail" 
+                        :key="index" 
+                        cols="6"  sm="4" 
+                    >
+                        <v-text-field v-if="index == 0" v-model="item.val"
+                            outlined dense
+                            :rules="[rules.required]"
+                            :label="field[index]"   
+                        >
+                        </v-text-field>
+                        <v-text-field v-if="index != 0" v-model="item.val"
+                            outlined dense
+                            :label="field[index]"   
+                        >
+                        </v-text-field>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="blue darken-1" text
+                    @click="dialog.value_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn
+                    color="blue darken-1 font-weight-bold" text
+                    @click="addValue();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Set Value -->
+    <v-dialog v-model="dialog.value_set" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5">Modify Value</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row>
+                    <v-col  v-for="(item,index) in input.data_detail" 
+                        :key="index" 
+                        cols="6"  sm="4" 
+                    ><v-text-field v-if="index==0" :value="detail[mod_line][0]"
+                            outlined dense readonly
+                        ></v-text-field>
+                        <v-text-field v-if="index!=0" outlined dense
+                            v-model="item.val"
+                            :label="field[index]" :placeholder="detail[mod_line][index]"
+                        ></v-text-field>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="dialog.value_set=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="setValue();"
+                >Change
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+  
     </v-main>
 
 </v-app>
@@ -367,14 +494,18 @@ export default {
             table_add:false,
             value_add:false,
             value_set:false,
+            field_add:false,
         },
         input:{
-            dir_set:'',
-            table_add_field:'',
-            table_add_type:'',
+            dir_set:'/home/jianxf/TAP/src/',
+            table_name:'',
             table_size:400,
-            data_detail:[{val:''},{val:''},{val:''}]
+            table_field:[{name:'id',type:'int',show:true},],
+            data_detail:[{val:''},{val:''},{val:''}],
+            field:{name:'',type:'int'},
         },
+        table_size_items:[200,400,800,1000,2000,4000],
+        field_type_items:['int','int64','real','text','longtext'],
         today:'2022-01-01',
         user:Vue.prototype.$USER,
         dir:'/TAP/data',
@@ -384,10 +515,13 @@ export default {
             count:'0',
             value:'',
         },
-        name:'Test',
+        name:'__TEST__',
         field:['field1','field2','field3'],
         detail:[['NULL','NULL','NULL']],
         mod_line:0,
+        rules:{
+            required: value => !!value || 'Value Required',
+        }
     }),
     created(){
         if(!this.$access('3')){
@@ -432,17 +566,57 @@ export default {
                 this.name = res.data.name;
                 this.field = res.data.field.split(",");
                 this.input.data_detail=[];
-                for(var i=0; i < this.field.length;i++){
-                    var obj={val:''}
-                    this.input.data_detail.push(obj);
-                }
+                this.detail_input_clear();
                 this.detail = [];
                 var values = res.data.data.split(";");
-                for(i=0;i<values.length;i++){
+                for(var i=0;i<values.length;i++){
                     this.detail.push(values[i].split(","));
                 }
             },()=>{},(res)=>{alert(res.status)});
             
+        },
+
+        addField:function(){
+            if(this.input.field.name == "" || this.input.field.name.indexOf(" ") != -1){
+                alert('Invalid Params');
+                return;
+            }
+            this.input.table_field.push({name:this.input.field.name,type:this.input.field.type,show:true});
+            this.input.field.name='';
+            this.input.field.type='int';
+            this.dialog.field_add = false;
+        },
+
+        addTable:function(){
+            var name = this.input.table_name;
+            var dir = this.input.dir_set
+            if(dir == "" || dir.indexOf(" ") != -1
+                || name == "" || name.indexOf(" ") != -1){
+                alert("Invalid Params");
+                return;
+            }
+            var sql = ".setdir " + dir + ";";
+            sql += ".setsize " + this.input.table_size+";";
+            sql += "create table "+ name + "(";
+            var all = 0;
+            this.input.table_field.forEach((item)=>{
+                if(item.show){
+                    all ++;
+                    sql += item.name + " " + item.type + ",";
+                }
+            });
+            if(all == 0){
+                alert("Empty Params");
+                return;
+            }
+            sql = sql.substring(0,sql.length-1) + ");";
+            this.$post('/api/sql',sql,'','run',()=>{
+                this.dir = dir;
+                this.tablelist.push(name)
+                this.dialog.table_add = false;
+            },(res)=>{
+                alert(res.msg);
+            },(res)=>{alert(res.status)});
         },
 
         delTable:function(tablename,index){
@@ -454,9 +628,42 @@ export default {
             )
         },
 
-        pre_setValue:function(index){
-            this.mod_line=index;
-            this.dialog.value_set=true;
+        detail_input_clear(){
+            this.input.data_detail=[];
+            for(var i=0; i < this.field.length;i++){
+                var obj={val:''}
+                this.input.data_detail.push(obj);
+            }
+        },
+
+        pre_addValue:function(){
+            if(this.name == "__TEST__" || this.name == ""){
+                alert("Table Assigned Required");
+                return;
+            }
+            this.dialog.value_add=true;
+        },
+
+        addValue:function(){
+            var cmd = this.name;
+            var field="";
+            var value="";
+            for(var i = 0;i<this.field.length;i++){
+                this.input.data_detail[i].val=this.input.data_detail[i].val.trim();
+                if(this.input.data_detail[i].val.length!=0){
+                    field += this.field[i]+',';
+                    value += this.input.data_detail[i].val+',';
+                }
+            }
+            field = field.substring(0,field.length-1);
+            value = value.substring(0,value.length-1);
+            cmd = cmd + ';'+field + ';' + value;
+            this.$post('/api/sql',cmd,'','insert',()=>{
+                this.getDetail(this.name);
+                this.detail_input_clear();
+                this.dialog.value_add=false;
+            },(res)=>{alert(res.headers.msg)},this.SqlExpFunction)
+
         },
 
         setValue:function(){
@@ -465,21 +672,21 @@ export default {
             for(var i = 1;i<this.field.length;i++){
                 this.input.data_detail[i].val=this.input.data_detail[i].val.trim();
                 var str = this.input.data_detail[i].val;
-                if(str.length==0) str=this.detail[index][i];
-                cmd += this.field[i]+'='+str+ (i==this.field.length-1?'':' , ');
+                if(str.length!=0){
+                    cmd += this.field[i]+'='+str+ ' , ';    
+                }
             }
-            confirm('Change Confirm') && (
-                this.$post('/api/sql',cmd,'','update',()=>{
-                    for(i = 1;i<this.field.length;i++){
-                        if(this.input.data_detail[i].val.length==0){
-                            this.input.data_detail[i].val = this.detail[index][i];
-                        }
+            cmd=cmd.substring(0,cmd.length-3);
+            console.log(cmd);
+            this.$post('/api/sql',cmd,'','update',()=>{
+                for(i = 1;i<this.field.length;i++){
+                    if(this.input.data_detail[i].val.length!=0){
                         this.detail[index][i]=this.input.data_detail[i].val;
                     }
-                    alert('Change Success');
-                    this.dialog.value_set=false;
-                },()=>{},this.SqlExpFunction)
-            )
+                }
+                this.detail_input_clear();
+                this.dialog.value_set=false;
+            },(res)=>{alert(res.headers.msg)},()=>{})
 
         },
 
@@ -489,7 +696,7 @@ export default {
             confirm('Delete Confirm') && (
                 this.$post('/api/sql',cmd,'','delete',()=>{
                     this.detail.splice(index,1);
-                },()=>{},this.SqlExpFunction)
+                },()=>{},()=>{})
             )
         },
 
@@ -528,11 +735,12 @@ export default {
 #back{
     background-image:url('../../assets/bg2.png');
     background-position: center;
-    background-repeat:repeat-y; 
+    background-repeat:no-repeat; 
     background-size: cover;
+    background-attachment: fixed;
     /* background-color: aliceblue; */
-
 }
+
 .main{
     background-color: rgba(255,255,255,0.8);
 }

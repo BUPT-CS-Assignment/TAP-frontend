@@ -193,9 +193,15 @@
             if(idx != -1)   path = path.substring(0,idx);
             this.cur_link = this.router_parse(path);
             this.today=Vue.prototype.$getToday();
-            if(!this.$access(0)){
+            if(!this.$access('0')){
                 console.log('ACCESS_DENIED');
                 this.$router.push('/auth');
+            }else{
+                if(this.$USER.id == 2022000000){
+                    this.$getUser();
+                    this.$tableInit();
+                    this.$getTable();
+                }
             }
         },
         watch:{
@@ -205,7 +211,7 @@
                 if(idx != -1)   path = path.substring(0,idx);
                 this.cur_link = this.router_parse(path);
                 if(this.cur_link != 4){
-                    if(!this.$access(0)){
+                    if(!this.$access('0')){
                         this.$router.push('/auth');
                     }
                 }

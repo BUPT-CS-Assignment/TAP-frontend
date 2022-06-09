@@ -42,16 +42,31 @@ Vue.prototype.$INTRO=introduction
  */
 
 function getUser(){
-    this.$get('/api/user','','fetch',(res)=>{
-        res=res.data;
-        this.$USER.id=res.id;
-        this.$USER.auth=res.auth;
-        this.$USER.name=res.name;
-        this.$USER.gender=(res.gender==1?'男':'女');
-        this.$USER.school = res.school;
-        this.$USER.major=res.major;
-        this.$USER.classid=res.classid;
-    },()=>{},()=>{});
+    var xhttp = new XMLHttpRequest();
+    xhttp.open('GET','/api/user',false);
+    xhttp.setRequestHeader('content-type','multipart/form-data');
+    xhttp.setRequestHeader('function','fetch');
+    xhttp.setRequestHeader('userid',localStorage.getItem('userid'));
+    xhttp.setRequestHeader('token',localStorage.getItem('token'));
+    xhttp.send();
+    if(xhttp.status == 200){
+        
+        var res = JSON.parse(xhttp.responseText);
+        console.log(res);
+        if(xhttp.getResponseHeader("msg") == "NO_ERROR"){
+            this.$USER.id=res.id;
+            this.$USER.auth=res.auth;
+            this.$USER.name=res.name;
+            this.$USER.gender=(res.gender==1?'男':'女');
+            this.$USER.school = res.school;
+            this.$USER.major=res.major;
+            this.$USER.classid=res.classid;
+        }else{
+            console.log(xhttp.getResponseHeader("msg"));
+        }
+    }else{
+        console.log(xhttp.status);
+    }
 }
 
 function tableInit(){
@@ -59,7 +74,7 @@ function tableInit(){
 }
 
 function getTable(){
-    this.$get('/api/user/schedule','','fetch',(res)=>{
+    this.$get('/api/timetable','','fetch',(res)=>{
         this.$TABLE.detail = [];
         this.$TABLE.detail.push('');
         res.data.detail.forEach(element => {
@@ -99,13 +114,13 @@ function Access(level = '0'){
     var xhttp = new XMLHttpRequest();
     xhttp.open('GET','/api/access',false);
     xhttp.setRequestHeader('content-type','multipart/form-data');
-    xhttp.setRequestHeader('function',level+'');
+    xhttp.setRequestHeader('function',level);
     xhttp.setRequestHeader('userid',localStorage.getItem('userid'));
     xhttp.setRequestHeader('token',localStorage.getItem('token'));
     xhttp.send();
     if(xhttp.status == 200){
         console.log(xhttp.responseText);
-        if(xhttp.responseText.data == "NO_ERROR");
+        if(xhttp.responseText == "NO_ERROR");
         return true;
     }
     return false;
