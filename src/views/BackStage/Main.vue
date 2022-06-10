@@ -7,26 +7,27 @@
         style="position:fixed"
         color="white"
         elevation="8"
-        width="360"
+        width="340"
     >
     <!-- Title -->
         <v-card
             class="mt-2 mx-auto py-6 pr-2 d-flex flex-column"
             elevation="0"
-            width="320"
+            width="300"
         >
             <span class="text-caption grey--text  font-weight-medium 
                         mx-auto mt-4 mb-1"
             >TAP Online Terminal
             </span>
-            <span class="text-h4 font-weight-black pr-1 mx-auto mb-1">
+            <span class="text-h4 font-weight-black pr-3 mx-auto mb-1">
                 <v-icon color="black" class="mr-2 mb-1">
                     mdi-application-brackets-outline
                 </v-icon>
                 Console
             </span>
-            <span class="text-caption grey--text mx-auto">
-                {{today}}
+            <span class="mx-auto grey--text text-caption font-weight-medium">
+                {{time.year}}-{{time.month}}-{{time.day}}
+                {{time.hour}}:<template v-if="time.min < 10">0</template>{{time.min}}
             </span>
         </v-card>
 
@@ -34,7 +35,7 @@
         <v-card
             class="mx-auto mb-4 px-2"
             elevation="0"
-            width="320"
+            width="300"
             color="grey lighten-4 rounded-lg"
         >
             <v-card-title class="text-subtitle-2 font-weight-black">
@@ -42,7 +43,7 @@
                 <v-btn
                     rounded  small
                     color="amber"
-                    class="ml-12 white--text font-weight-bold"
+                    class="ml-auto white--text font-weight-bold"
                     @click="sendSQL()"
                 >SEND
                 </v-btn>
@@ -59,7 +60,7 @@
     <!-- Result -->
         <v-card
             class="mb-5 fill-height mx-auto rounded-lg px-2"
-            width="320"
+            width="300"
             elevation="0"
             color="grey lighten-4"
         >
@@ -78,7 +79,7 @@
                     <v-card
                         class="ml-0 rounded-lg d-flex"
                         elevation="0"
-                        width="275" height="44"
+                        width="255" height="44"
                     >
                         <span class="black--text text-subtitle-2 font-weight-bold ma-auto" 
                         >{{sql.msg}}
@@ -93,7 +94,7 @@
                 class="rounded-lg d-flex pa-1 overflow-y-auto"
                 color="white"
                 elevation="0"
-                width="275"
+                width="255"
             ><span 
                 class="text-subtitle-2 font-weight-bold ma-auto"
                 style="max-width:240px;word-break:break-all;"
@@ -105,7 +106,7 @@
     
 <!-- Infomation -->
     <v-main class="main align-self-start pa-4 fill-height" 
-        style="position:absolute;top:0;right:0;left:360px"   
+        style="position:absolute;top:0;right:0;bottom:0;left:340px"   
     >
 
 <!-- Head -->
@@ -169,40 +170,21 @@
                 </v-container>
                 
                 <v-card 
-                    class="mx-auto my-auto pa-0"
+                    class="mx-auto my-auto pb-1"
                     style="background:none"
                     elevation="0" 
-                    max-width="180px"
+                    max-width="300px"
                 >
-                    <v-dialog v-model="dialog.dir_set" persistent max-width="400px">
-                        <template v-slot:activator="{on,attrs}">
-                            <v-btn
-                                small rounded outlined color="info"
-                                class="mr-2"
-                                v-bind="attrs" v-on="on"
-                            ><v-icon small>mdi-cog</v-icon>
-                            </v-btn>
-                        </template>
-                        <v-card class="px-2 pt-6 pb-2 rounded-lg">
-                            <v-card-title class="text-h5"> Change Current Dir </v-card-title>
-                            <v-container fluid class="px-6">
-                                <v-text-field v-model="input.dir_set" :label="dir"></v-text-field>
-                            </v-container>
-                            <v-card-actions>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                    color="blue darken-1" text
-                                    @click="dialog.dir_set=false"
-                                >Cancel
-                                </v-btn>
-                                <v-btn
-                                    color="blue darken-1 font-weight-bold" text
-                                    @click="changeDir();"
-                                >Change
-                                </v-btn>
-                            </v-card-actions>
-                        </v-card>
-                    </v-dialog>
+                    <v-btn
+                        small rounded outlined color="indigo" class="mr-2"
+                        @click="dialog.dir_set = true"
+                    ><v-icon small>mdi-vector-polyline</v-icon>
+                    </v-btn>
+                    <v-btn 
+                        small rounded outlined color="blue" class="mr-2"
+                        @click="ratioSync();dialog.clock_set = true"
+                    ><v-icon small>mdi-clock-fast</v-icon>
+                    </v-btn>
                     <v-btn
                         small rounded outlined color="orange" class="mr-2"
                         @click="refresh()"
@@ -228,7 +210,7 @@
                         rounded  small color="success" outlined
                         style="position:absolute;right:35px;top:25px"
                         @click="dialog.table_add = true"
-                    ><v-icon small>mdi-plus-thick</v-icon>
+                    >New Table
                     </v-btn>
                 </v-card-title>   
 
@@ -249,13 +231,13 @@
                                     class="ma-1"
                                     rounded small color="info" outlined
                                     @click="getDetail(item)"
-                                ><v-icon small>mdi-arrow-down-thick</v-icon>
+                                ><v-icon small>mdi-database-search</v-icon>
                                 </v-btn>
-                                <v-btn
-                                    class="ma-1"
-                                    rounded small color="error" outlined
+                                <v-btn class="ma-1" rounded small color="error" outlined
                                     @click="delTable(item,index)"
-                                ><v-icon small>mdi-delete-forever</v-icon>
+                                ><v-icon small>
+                                    mdi-delete-off
+                                    </v-icon>
                                 </v-btn>
                             </td>
                         </tr>
@@ -274,12 +256,12 @@
                     class="white--text font-weight-bold"
                     rounded  small color="success" outlined
                     style="position:absolute;right:35px;top:25px"
-                    @click="dialog.table_add = true"
-                ><v-icon small>mdi-plus-thick</v-icon>
+                    @click="pre_addValue()"
+                >New Value
                 </v-btn>
             </v-card-title>
 
-            <v-simple-table  class="pa-2" fixed-header  dense>
+            <v-simple-table  class="pa-2" fixed-header dense>
                 <thead>
                     <tr>
                         <th class="text-left">S/N</th>
@@ -306,8 +288,8 @@
                             <v-btn
                                 class="ma-1"
                                 rounded small color="error" outlined
-                                @click="delValue(value[0],index)"
-                            ><v-icon small>mdi-delete-forever</v-icon>
+                                @click="delValue(value,index)"
+                            ><v-icon small>mdi-delete-off</v-icon>
                             </v-btn>
                         </td>
                     </tr>
@@ -318,6 +300,81 @@
     </v-card>
 
 <!-- Dialog -->
+    <!-- Set Clock -->
+    <v-dialog v-model="dialog.clock_set" persistent max-width="500px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5"> Change Clock Rate </v-card-title>
+            <v-container>
+                <v-row class="mx-4 mb-4">
+                    <v-col class="text-left">
+                        <span class="text-h3 font-weight-medium">
+                            {{clock_rate_items[input.clock_rate]}}
+                        </span>
+                        <span class="subheading font-weight-light mr-1">TIMES</span>
+                    </v-col>
+                    <v-col class="text-right mr-3">
+                        <v-avatar
+                            :color="clock_rate_color[input.clock_rate]"
+                            size="60"
+                        ><v-icon large>
+                            {{clock_rate_icon[input.clock_rate]}}
+                        </v-icon>
+                        </v-avatar>
+                    </v-col>
+                </v-row>
+                <v-row class="mx-6">
+                    <v-slider step="1" min="0" max="8" track-color="grey" always-dirty
+                        :color="clock_rate_color[input.clock_rate]"
+                        v-model="input.clock_rate"
+                    >
+                        <template v-slot:prepend>
+                            <v-icon color="indigo">mdi-run</v-icon>
+                        </template>
+                        <template v-slot:append>
+                            <v-icon color="red">mdi-rocket-launch</v-icon>
+                        </template>
+                    </v-slider>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="blue darken-1" text
+                    @click="dialog.clock_set=false"
+                >Cancel
+                </v-btn>
+                <v-btn
+                    color="blue darken-1 font-weight-bold" text
+                    @click="changeRatio();"
+                >Change
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Set Directory -->
+    <v-dialog v-model="dialog.dir_set" persistent max-width="400px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5"> Change Current Dir </v-card-title>
+            <v-container fluid class="px-6">
+                <v-text-field v-model="input.dir_set" :label="dir"></v-text-field>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="blue darken-1" text
+                    @click="dialog.dir_set=false"
+                >Cancel
+                </v-btn>
+                <v-btn
+                    color="blue darken-1 font-weight-bold" text
+                    @click="changeDir();"
+                >Change
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
     <!-- Add Table -->
     <v-dialog v-model="dialog.table_add" persistent max-width="600px">
         <v-card class="px-2 pt-6 pb-2 rounded-lg">
@@ -495,18 +552,23 @@ export default {
             value_add:false,
             value_set:false,
             field_add:false,
+            clock_set:false,
         },
         input:{
-            dir_set:'/home/jianxf/TAP/src/',
+            dir_set:'/home/jianxf/TAP/data/src/',
             table_name:'',
             table_size:400,
             table_field:[{name:'id',type:'int',show:true},],
             data_detail:[{val:''},{val:''},{val:''}],
             field:{name:'',type:'int'},
+            clock_rate:0,
         },
         table_size_items:[200,400,800,1000,2000,4000],
         field_type_items:['int','int64','real','text','longtext'],
-        today:'2022-01-01',
+        clock_rate_items:[1,10,30,60,300,600,900,1800,3600],
+        clock_rate_color:['indigo','indigo','blue','teal','cyan','green','lime','orange','red'],
+        clock_rate_icon:['mdi-run','mdi-run-fast','mdi-bike','mdi-bike-fast','mdi-moped','mdi-car','mdi-train','mdi-airplane','mdi-rocket-launch'],
+        time:Vue.prototype.$SYSTIME,
         user:Vue.prototype.$USER,
         dir:'/TAP/data',
         sql:{
@@ -528,7 +590,6 @@ export default {
             console.log("ACCESS_DENIED");
             this.$router.push('/auth');
         }
-        this.today = Vue.prototype.$getToday();
         this.getDir();
         this.getList();
     },
@@ -562,7 +623,7 @@ export default {
         },
 
         getDetail:function(tablename){
-            this.$get('/api/sql',{table:tablename},'detail',(res)=>{
+            this.$post('/api/sql',tablename,'','detail',(res)=>{
                 this.name = res.data.name;
                 this.field = res.data.field.split(",");
                 this.input.data_detail=[];
@@ -572,8 +633,15 @@ export default {
                 for(var i=0;i<values.length;i++){
                     this.detail.push(values[i].split(","));
                 }
-            },()=>{},(res)=>{alert(res.status)});
-            
+            },(res)=>{
+                if(res.headers.msg == "DATA_NOT_FOUND"){
+                    this.name = res.data.name;
+                    this.field = res.data.field.split(",");
+                    this.input.data_detail=[];
+                    this.detail_input_clear();
+                    this.detail = [['NULL']];
+                }
+            },(res)=>{alert(res.status)});
         },
 
         addField:function(){
@@ -620,9 +688,8 @@ export default {
         },
 
         delTable:function(tablename,index){
-            console.log(tablename);
             confirm('Delete Confirm') && (
-                this.$post('/api/sql',tablename,'','deltable',()=>{
+                this.$post('/api/sql',tablename,'','drop',()=>{
                     this.tablelist.splice(index,1);
                 },()=>{},this.SqlExpFunction)
             )
@@ -690,7 +757,8 @@ export default {
 
         },
 
-        delValue:function(dataid,index){
+        delValue:function(obj,index){
+            var dataid = obj[0];
             console.log(dataid);
             var cmd = this.name+';'+this.field[0]+'='+this.detail[index][0];
             confirm('Delete Confirm') && (
@@ -718,6 +786,40 @@ export default {
                 this.dir=this.input.dir_set;
                 this.dialog.dir_set=false;
             },()=>{alert('Dir Change Failed')},(res)=>{alert(res.status)});
+        },
+
+        changeRatio:function(){
+            this.$http.get('/api/clock',{
+                params:{'action':'m',
+                        'rate':this.clock_rate_items[this.input.clock_rate],
+                        },
+                headers:{'content-type': 'multipart/form-data'}
+            })
+            .then(res => {
+                console.log(res);
+                if(res.data.code == 0){
+                    this.dialog.clock_set = false;
+                    this.$getTime();
+                }else{
+                    console.log(res.data.msg);
+                }
+            }) 
+            .catch(err => {
+                console.log(err);
+            })
+        },
+
+        ratioSync:function(){
+            //1,10,30,60,300,600,900,1800,3600
+            if(this.time.ratio < 10) this.input.clock_rate = 0;
+            else if(this.time.ratio < 30) this.input.clock_rate = 1;
+            else if(this.time.ratio < 60) this.input.clock_rate = 2;
+            else if(this.time.ratio < 300) this.input.clock_rate = 3;
+            else if(this.time.ratio < 600) this.input.clock_rate = 4;
+            else if(this.time.ratio < 900) this.input.clock_rate = 5;
+            else if(this.time.ratio < 1800) this.input.clock_rate = 6;
+            else if(this.time.ratio < 3600) this.input.clock_rate = 7;
+            else this.input.clock_rate = 8;
         },
 
         Signout:function(){

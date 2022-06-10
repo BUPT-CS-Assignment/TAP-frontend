@@ -4,6 +4,7 @@
     <template v-if='cur_link != 4'>
     <v-navigation-drawer 
         class="d-none d-sm-none d-md-flex "
+        width="280"
         app
     >
         <v-list-item class="mt-12 mr-2 d-flex flex-column align-center">
@@ -18,7 +19,8 @@
                 Tiny & Pretty
             </v-list-item-title>
             <span class="mx-auto grey--text text-caption font-weight-medium">
-                {{today}}
+                {{time.year}}-{{time.month}}-{{time.day}}
+                {{time.hour}}:<template v-if="time.min < 10">0</template>{{time.min}}
             </span>
         </v-list-item>
 
@@ -72,7 +74,13 @@
         class="pr-3"
         color="#FAFAFA"
         dense
-    >
+    >   
+        <span class="mx-auto grey--text text-caption font-weight-medium
+                    d-flex d-sm-flex d-md-none"
+            style="position:absolute;"
+        >{{time.year}}-{{time.month}}-{{time.day}}
+            {{time.hour}}:<template v-if="time.min < 10">0</template>{{time.min}}
+        </span>
         <v-container 
             class="py-0 d-flex justify-center align-self-center"
             v-if="cur_link!=4"
@@ -172,7 +180,7 @@
         data: () => ({
         cur_link:0,
         user:Vue.prototype.$USER,
-        today:'2022-01-01',
+        time:Vue.prototype.$SYSTIME,
         links: [
             ['主页','/home','mdi-account-circle','info'],
             ['日程','/schedule','mdi-calendar-check','orange'],
@@ -186,21 +194,25 @@
             [['校园导航','/map/navigation'],['地图概览','/map/overview']],
         ],
         }),
+        mounted() {
+            Vue.prototype.$getTime();
+        },
         created(){
             var path = window.location.hash;
             path = path.substring(2);
             var idx = path.indexOf('/');
             if(idx != -1)   path = path.substring(0,idx);
             this.cur_link = this.router_parse(path);
-            this.today=Vue.prototype.$getToday();
+            Vue.prototype.$getTime();
             if(!this.$access('0')){
                 console.log('ACCESS_DENIED');
                 this.$router.push('/auth');
             }else{
-                if(this.$USER.id == 2022000000){
-                    this.$getUser();
+                this.$getUser();
+                if(this.$USER.id != 10000){
                     this.$tableInit();
                     this.$getTable();
+                    this.$getEvents();
                 }
             }
         },
