@@ -36,8 +36,8 @@ const routes = [
     {path:'/home',redirect:'/home/overview'},
     {path:'/home/detail',component:HomeDetail},
 
-    {path:'/schedule',redirect:'/schedule/overview'},
-    {path:'/schedule/overview',component:ScheMain},
+    {path:'/schedule',redirect:'/schedule/timetable'},
+    {path:'/schedule/events',component:ScheMain},
     {path:'/schedule/timetable',component:ScheTable},
 
     {path:'/courses',redirect:'/courses/index'},

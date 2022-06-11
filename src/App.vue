@@ -189,13 +189,13 @@
         ],
         sec_links:[
             [['概览','/home/overview'],['详情','/home/detail']],
-            [['日程表','/schedule/overview'],['课程安排','/schedule/timetable']],
+            [['课程安排','/schedule/timetable'],['活动列表','/schedule/events']],
             [['课程信息','/courses/index']],
             [['校园导航','/map/navigation'],['地图概览','/map/overview']],
         ],
         }),
         mounted() {
-            Vue.prototype.$getTime();
+            //Vue.prototype.$getTime();
         },
         created(){
             var path = window.location.hash;

@@ -203,7 +203,6 @@ function getTime(){
             }
             timeUpdate(res.data.data);
             date_format();
-            
         }else{
             console.log(res.data.msg);
         }

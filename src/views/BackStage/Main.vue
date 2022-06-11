@@ -123,19 +123,29 @@
         <v-container d-flex flex-row flex-wrap justify-start class="ml-1">
             <v-card 
                 class="rounded-lg my-2 mr-8"
-                width="200" height="70"
+                width="200" height="100"
             >
                 <v-card-title>User Number</v-card-title>
+                <v-btn rounded small class="font-weight-bold" 
+                        color="grey lighten-2" elevation="0"
+                        style="position:absolute;right:15px;bottom:10px"
+                        @click="dialog.user_add = true;"
+                >New</v-btn>
             </v-card>
             <v-card 
                 class="rounded-lg my-2 mr-8"
-                width="200" height="70"
+                width="200" height="100"
             >
-                <v-card-title>Course Number</v-card-title>
+                <v-card-title class="font-weight-bold">Course Number</v-card-title>
+                <v-btn rounded small class="font-weight-bold" 
+                        color="grey lighten-2" elevation="0"
+                        style="position:absolute;right:15px;bottom:10px"
+                        @click="dialog.course_add = true;"
+                >New</v-btn>
             </v-card>
             <v-card
                 class="rounded-lg my-2"
-                width="200" height="70"
+                width="200" height="100"
             >
                 <v-card-title>Online User</v-card-title>
             </v-card>
@@ -532,6 +542,126 @@
         </v-card>
     </v-dialog>
   
+    <!-- Add Course -->
+    <v-dialog v-model="dialog.course_add" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5 ml-1">Add New Course</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row class="mx-auto">
+                    <v-col>
+                        <v-text-field outlined dense label="ID" v-model="input.course_detail.id">
+                        </v-text-field>
+                    </v-col>
+                    <v-col >
+                        <v-text-field outlined dense label="Name" v-model="input.course_detail.name">
+                        </v-text-field>
+                    </v-col>
+                    <v-col >
+                        <v-btn outlined color="primary" rounded class="font-weight-bold mx-auto"
+                            @click="dialog.week_set = true"
+                        >Week 
+                            <span class="text-h6 font-weight-bold black--text ml-2"
+                            >{{input.course_detail.week}}</span>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+                <v-row class="mx-1">
+                    <v-textarea filled clearable dense label="Brief Introduction" auto-grow row="2"
+                        v-model="input.course_detail.intro"
+                    ></v-textarea>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="dialog.course_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="addCourse();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Week Code -->
+    <v-dialog v-model="dialog.week_set" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5">Week Select</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row dense no-gutters>
+                    <v-col v-for="(item,index) in input.week_code" :key="index" cols="2"
+                    ><v-checkbox v-model="item.t"
+                        :label="index+1+''" color="info"
+                    ></v-checkbox>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="dialog.week_set=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="input.course_detail.week=65535;dialog.week_set=false;"
+                >All
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="setWeek();"
+                >Select
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Add User -->
+    <v-dialog v-model="dialog.user_add" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5 ml-1">Add New User</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row class="mx-auto" >
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="ID" v-model="input.user_detail.id">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="Name" v-model="input.user_detail.name">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-combobox v-model="input.user_detail.auth"
+                            :items="user_auth_items" outlined dense label="Auth"
+                        ></v-combobox>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-combobox v-model="input.user_detail.gender"
+                            :items="user_gender_items" outlined dense label="Gender"
+                        ></v-combobox>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="School" v-model="input.user_detail.school">
+                        </v-text-field>
+                    </v-col>
+                    <v-col v-if="input.user_detail.auth != '教师'" cols="6">
+                        <v-text-field outlined dense label="Major" v-model="input.user_detail.major">
+                        </v-text-field>
+                    </v-col>
+                    <v-col v-if="input.user_detail.auth != '教师'" cols="6">
+                        <v-text-field outlined dense label="Class" v-model="input.user_detail.classid">
+                        </v-text-field>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="dialog.user_add=false">Cancel</v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text @click="addUser();">Add</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
     </v-main>
 
 </v-app>
@@ -553,6 +683,9 @@ export default {
             value_set:false,
             field_add:false,
             clock_set:false,
+            course_add:false,
+            user_add:false,
+            week_set:false,
         },
         input:{
             dir_set:'/home/jianxf/TAP/data/src/',
@@ -560,6 +693,12 @@ export default {
             table_size:400,
             table_field:[{name:'id',type:'int',show:true},],
             data_detail:[{val:''},{val:''},{val:''}],
+            user_detail:{id:0,name:'',auth:'学生',gender:'女',school:0,major:0,classid:0},
+            course_detail:{id:0,name:'',week:0,intro:''}, 
+            week_code:[{t:false},{t:false},{t:false},{t:false},
+                        {t:false},{t:false},{t:false},{t:false},
+                        {t:false},{t:false},{t:false},{t:false},
+                        {t:false},{t:false},{t:false},{t:false}],
             field:{name:'',type:'int'},
             clock_rate:0,
         },
@@ -568,6 +707,8 @@ export default {
         clock_rate_items:[1,10,30,60,300,600,900,1800,3600],
         clock_rate_color:['indigo','indigo','blue','teal','cyan','green','lime','orange','red'],
         clock_rate_icon:['mdi-run','mdi-run-fast','mdi-bike','mdi-bike-fast','mdi-moped','mdi-car','mdi-train','mdi-airplane','mdi-rocket-launch'],
+        user_auth_items:['学生','学生管理员','教师'],
+        user_gender_items:['女','男'],
         time:Vue.prototype.$SYSTIME,
         user:Vue.prototype.$USER,
         dir:'/TAP/data',
@@ -786,6 +927,49 @@ export default {
                 this.dir=this.input.dir_set;
                 this.dialog.dir_set=false;
             },()=>{alert('Dir Change Failed')},(res)=>{alert(res.status)});
+        },
+
+        setWeek:function(){
+            var code = 0;
+            for(var i = 15; i >= 0; i--){
+                if(this.input.week_code[i].t){
+                    code += (1<<i);
+                }
+            }
+            this.input.course_detail.week = code;
+            this.dialog.week_set  = false;
+        },
+
+        addCourse:function(){
+            // course_detail:{id:0,name:'',week:0,intro:''}, 
+            var detail = this.input.course_detail.id + ","
+                        + this.input.course_detail.name + ","
+                        +this.input.course_detail.week;
+            console.log(detail);
+            this.$post('/api/course',detail + ";"+this.input.course_detail.intro,'',"new",()=>{
+                this.dialog.course_add=false;
+            },(res)=>{alert(res.headers.msg)},()=>{});
+        },
+
+        addUser:function(){
+            var detail = this.input.user_detail.id + ",";
+            var auth = this.input.user_detail.auth;
+            if(auth == "学生")  detail += "0,"
+            else if(auth == "学生管理员") detail += "1,";
+            else if(auth == "教师"){
+                detail += "2,";
+                this.input.classid = "0"; this.input.major = "0";
+            }
+            detail += this.input.user_detail.name+",";
+            detail += (this.input.user_detail.gender == "女"?"0,":"1,");
+            detail += this.input.user_detail.school + ","
+                    + this.input.user_detail.major + ","
+                    + this.input.user_detail.classid;
+            console.log(detail);
+            this.$post('/api/user',detail,'',"new",()=>{
+                this.dialog.user_add=false;
+            },(res)=>{alert(res.headers.msg)},()=>{});
+
         },
 
         changeRatio:function(){
