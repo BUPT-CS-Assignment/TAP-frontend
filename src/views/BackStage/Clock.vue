@@ -48,11 +48,11 @@
     </v-card-actions>
 
     <v-card style="position:absolute;left:0;top:0;bottom:0"
-        color="#c94449" width="5" elevation="0" class="rounded-0"
+        color="red lighten-1" width="5" elevation="0" class="rounded-0"
     ></v-card>
 
     <v-card style="position:absolute;right:0;top:0;bottom:0"
-        color="#c94449" width="5" elevation="0" class="rounded-0"
+        color="red lighten-1" width="5" elevation="0" class="rounded-0"
     ></v-card>
 
     </v-container>
@@ -85,6 +85,7 @@ export default {
                 console.log(res);
                 if(res.data.code == 0){
                     this.$getTime();
+                    alert("Change Clock Ratio Success")
                 }else{
                     console.log(res.data.msg);
                 }

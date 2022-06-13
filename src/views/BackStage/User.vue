@@ -3,7 +3,7 @@
     <v-simple-table class="mx-2" dense height="220px">
         <tbody>
             <tr v-for="(item,index) in list" :key="index">
-                <td>{{item}}</td>
+                <td style="border:0px;">{{item}}</td>
             </tr>
         </tbody>
     </v-simple-table>
@@ -16,11 +16,11 @@
     </v-btn>
 
     <v-card style="position:absolute;left:0;top:0;bottom:0"
-        color="#c94449" width="5" elevation="0" class="rounded-0"
+        color="red lighten-1" width="5" elevation="0" class="rounded-0"
     ></v-card>
 
     <v-card style="position:absolute;right:0;top:0;bottom:0"
-        color="#c94449" width="5" elevation="0" class="rounded-0"
+        color="red lighten-1" width="5" elevation="0" class="rounded-0"
     ></v-card>
 
     <!-- Add User -->

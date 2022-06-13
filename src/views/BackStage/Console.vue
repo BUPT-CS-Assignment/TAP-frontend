@@ -1,48 +1,323 @@
 <template>
-<v-card class="mx-10 pa-0">
-    <v-row>
-        <v-col>
-            <v-card class="mx-2 px-2 rounded-lg">
-                <v-textarea  label="Statement"
-                    solo  flat  dense  counter auto-grow clearable
+<v-card class="mx-10 pa-0" elevation="0" style="background:none;">
+    <v-card-title class="ml-5 mb-3 text-h5 grey--text font-weight-black">
+        CONSOLE
+    </v-card-title>
+<!-- Terminal -->
+    <v-card class="mx-8 pb-5 rounded-0" elevation="4">
+        <v-row class="mx-1">
+            <v-col>
+                <v-textarea  label="SQL STATMENT" rows="1" class="font-weight-bold"
+                    solo flat dense  counter auto-grow clearable
                     v-model="sql.req"
-                ></v-textarea>
-            </v-card>
-        </v-col>
-    </v-row>
-    <v-row>
-        <v-col cols="3">
-            <v-card>
-                <v-card class="ml-0 rounded-lg d-flex"
-                    elevation="0" height="44"
-                ><span class="black--text text-subtitle-2 font-weight-bold ma-auto" 
-                    >{{sql.msg}}
-                    </span>
-                </v-card>
-            </v-card>
-        </v-col>
-        <v-col>
-            <v-card>
-                <v-badge class="ml-3" left color="amber" overlap :content="sql.count">
-                    <v-card style="background:none;" color="white" min-height="50">
-                        <span class="text-subtitle-2 font-weight-bold ma-auto"
-                            style="max-width:240px;word-break:break-all;"
-                        >{{sql.value}}
+                >   <template v-slot:prepend-inner>
+                        <v-btn small color="teal lighten-2"
+                            class="mr-2 white--text font-weight-bold"
+                            @click="sendSQL()"
+                        >SEND
+                        </v-btn>
+                    </template>
+                </v-textarea>
+            </v-col>
+        </v-row>
+        <v-row class="mx-2 mt-0 pt-0">
+            <v-col cols="2">
+                <v-card outlined elevation="0">
+                    <v-card class="rounded-lg d-flex py-2" elevation="0"
+                    ><span class="black--text text-subtitle-2 font-weight-bold ma-auto" 
+                        >{{sql.msg}}
                         </span>
                     </v-card>
-                </v-badge>
+                </v-card>
+            </v-col>
+            <v-col>
+                <v-card outlined elevation="0">
+                    <v-badge class="ml-3" left color="teal lighten-2" overlap :content="sql.count">
+                        <v-card style="background:none;" color="white"  class="py-2" elevation="0">
+                            <span class="text-subtitle-2 font-weight-bold px-2"
+                                style="word-break:break-all;"
+                            >{{sql.value}}
+                            </span>
+                        </v-card>
+                    </v-badge>
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-card>
+    
+    <v-row class="mt-14 ml-9">
+        <span class="text-h5 grey--text font-weight-black">DATABASE</span>
+    </v-row>
+
+<!-- Table Control -->
+    <v-row class="mx-2">
+    <!-- Table List -->
+        <v-col cols="4">
+            <v-card elevation="0" style="background:none;">
+                <v-card-title>
+                    <span class="grey--text text--lighten-1 text-subtitle-1 font-weight-bold">
+                        TABLE LIST
+                    </span>
+                    <span class="mx-3 grey--text text--lighten-1 text-h5"> | </span>
+                    <v-btn class="px-0 white--text font-weight-bold" text 
+                        color="red lighten-2" @click="dialog.table_add = true"
+                    >ADD NEW
+                    </v-btn>
+                </v-card-title>   
+
+                <v-simple-table >
+                    <tbody >
+                        <tr v-for="(item,index) in tablelist" :key="index" >
+                            <td style="border:0px;">
+                                <v-card class="px-1 my-2 rounded-0" elevation="4" fluid height="70">
+                                    <v-card-title>
+                                        <v-btn class="mx-1 text-h6 font-weight-bold" color="teal lighten-2" text
+                                           @click="getDetail(item)"
+                                        >{{item}}
+                                        </v-btn>
+                                        <v-btn class="ml-auto text-overline px-0" color="grey lighten-1" text
+                                            @click="delTable(item,index)"
+                                        >DELETE
+                                        </v-btn>
+                                    </v-card-title>
+                                </v-card>
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            </v-card>
+        </v-col>
+    <!-- Space Line -->
+        
+    <v-card width="2" class="ml-4 mr-3 mt-10" color="grey lighten-2" elevation="0"></v-card>
+        
+    <!-- Table Detail -->
+        <v-col>
+            <v-card elevation="0" style="background:none;">
+                <v-card-title>
+                    <span class="grey--text text--lighten-1 text-subtitle-1 font-weight-bold">
+                        DETAIL
+                    </span>
+                    <span class="mx-3 grey--text text--lighten-1 text-h5"> | </span>
+                    <v-btn class="px-0 white--text font-weight-bold" text 
+                        color="red lighten-2" @click="pre_addValue()"
+                    >NEW VALUE FOR {{name}}
+                    </v-btn>
+                </v-card-title> 
+                <v-simple-table class="px-4">
+                    <thead>
+                        <tr>
+                            <th class="text-left red--text text--lighten-2">S/N</th>
+                            <th v-for="(item,index) in field" :key="index"
+                                class="text-left font-weight-bold grey--text" 
+                            >{{item}}
+                            </th>
+                            <th class="text-center font-weight-bold grey--text">
+                                [ OPTION ]
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(value,index) in detail" :key="index">
+                            <td class="teal--text text--lighten-2 font-weight-bold">
+                                {{index}}
+                            </td>
+                            <td v-for="(item,idx) in value" :key="idx">
+                                {{item}}
+                            </td>
+                            <td class="d-flex justify-center align-center">
+                                <v-btn class="font-weight-bold" color="teal lighten-2" text
+                                    @click="mod_line=index;dialog.value_set=true;"
+                                >EDIT
+                                </v-btn>
+                                <v-btn color="red lighten-2" text
+                                    @click="delValue(value,index)"
+                                >DELETE
+                                </v-btn>
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
             </v-card>
         </v-col>
     </v-row>
 
-    <v-row>
-        <v-col>
-            <v-card wdith="100" height="300"></v-card>
-        </v-col>
-        <v-col>
-            <v-card wdith="200" height="300"></v-card>
-        </v-col>
-    </v-row>
+    <!-- Add Table -->
+    <v-dialog v-model="dialog.table_add" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5">
+                <span class="grey--text text--lighten-1 text-subtitle-1 font-weight-bold">
+                    NEW TABLE
+                </span>
+                <span class="mx-3 grey--text text--lighten-1 text-h5"> | </span>
+                <v-btn class="px-0 white--text font-weight-bold" text 
+                    color="red lighten-2" @click="dialog.field_add = true"
+                >NEW FIELD
+                </v-btn>
+            </v-card-title>
+            <v-container fluid class="px-6 pb-0 mb-0">
+                <v-col>
+                    <v-row>
+                        <v-text-field outlined dense label = "Directory"
+                            v-model = "input.dir_set" :rules="[rules.required]"
+                        ></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field outlined dense label="Table Name"
+                            v-model="input.table_name" :rules="[rules.required]"
+                        ></v-text-field>
+                        <v-combobox outlined dense label="Table Size (400 as defalut)" class="ml-3"
+                            v-model="input.table_size"
+                            :items="table_size_items"
+                        ></v-combobox>
+                    </v-row>
+                </v-col>
+            </v-container>
+            <v-container d-flex flex-row flex-wrap class="px-6">
+                <v-card  v-for="(item,index) in input.table_field" :key = "index"
+                    elevation="0" style="background: none;"
+                ><v-chip v-if="item.show" close outlined
+                        class="ma-2 teal--text text--lighten-2 font-weight-bold"
+                        @click:close="item.show = false"
+                    ><v-icon color="teal lighten-2" class="mr-1">mdi-tag-multiple</v-icon>
+                        {{item.name}}
+                        <span class="white--text">-</span>
+                        <span class="teal--text text-uppercase">{{item.type}}</span>
+                    
+                    </v-chip>
+                </v-card>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="teal lighten-2" text
+                    @click="dialog.table_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="red lighten-2 font-weight-bold" text
+                    @click="addTable();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Add Field -->
+    <v-dialog v-model="dialog.field_add" persistent max-width="300px">
+        <v-card class="pt-4 pb-2 rounded-lg">
+            <v-card-title class="text-h5 mb-2 ml-1">
+                <span class="red--text text--lighten-2 text-subtitle-1 font-weight-bold">
+                    NEW FIELD
+                </span>
+            </v-card-title>
+            <v-col>
+                <v-row class="px-6">
+                    <v-text-field v-model = "input.field.name"
+                        outlined dense label = "Field Name"
+                        :rules="[rules.required]"
+                    ></v-text-field>
+                </v-row>
+                <v-row class="px-6">
+                    <v-combobox v-model="input.field.type"
+                        :items="field_type_items"
+                        outlined dense label="Field Type"
+                    ></v-combobox>
+                </v-row>
+            </v-col>
+            <v-card-actions><v-spacer></v-spacer>
+                <v-btn color="teal lighten-2" text
+                    @click="dialog.field_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="red lighten-2 font-weight-bold" text
+                    @click="addField();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Add Value -->
+    <v-dialog v-model="dialog.value_add" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5 mb-2 ml-1">
+                <span class="red--text text--lighten-2 text-subtitle-1 font-weight-bold">
+                    NEW VALUE
+                </span>
+            </v-card-title>
+            <v-container fluid class="px-6">
+                <v-row>
+                    <v-col  v-for="(item,index) in input.data_detail" 
+                        :key="index" 
+                        cols="6"  sm="4" 
+                    >
+                        <v-text-field v-if="index == 0" v-model="item.val"
+                            outlined dense
+                            :rules="[rules.required]"
+                            :label="field[index]"   
+                        >
+                        </v-text-field>
+                        <v-text-field v-if="index != 0" v-model="item.val"
+                            outlined dense
+                            :label="field[index]"   
+                        >
+                        </v-text-field>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="teal lighten-2" text
+                    @click="dialog.value_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn
+                    color="red lighten-2 font-weight-bold" text
+                    @click="addValue();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Set Value -->
+    <v-dialog v-model="dialog.value_set" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5 mb-2 ml-1">
+                <span class="red--text text--lighten-2 text-subtitle-1 font-weight-bold">
+                    MODIFY
+                </span>
+            </v-card-title>
+            <v-container fluid class="px-6">
+                <v-row>
+                    <v-col  v-for="(item,index) in input.data_detail" 
+                        :key="index" 
+                        cols="6"  sm="4" 
+                    ><v-text-field v-if="index==0" :value="detail[mod_line][0]"
+                            outlined dense readonly
+                        ></v-text-field>
+                        <v-text-field v-if="index!=0" outlined dense
+                            v-model="item.val"
+                            :label="field[index]" :placeholder="detail[mod_line][index]"
+                        ></v-text-field>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="teal lighten-2" text
+                    @click="dialog.value_set=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="red lighten-2 font-weight-bold" text
+                    @click="setValue();"
+                >Change
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+
 </v-card>
 </template>
 
@@ -55,7 +330,7 @@ export default {
         time:Vue.prototype.$SYSTIME,
         user:Vue.prototype.$USER,
         tablelist:[
-            'Test',
+            'Test'
         ],
         dialog:{
             dir_set:false,
@@ -81,7 +356,7 @@ export default {
             count:'0',
             value:'RETURN VALUE',
         },
-        name:'__TEST__',
+        name:'NULL',
         field:['field1','field2','field3'],
         detail:[['NULL','NULL','NULL']],
         mod_line:0,
@@ -90,7 +365,8 @@ export default {
         }
     }),
     created() {
-
+        this.getDir();
+        this.getList();
     },
     methods: {
        clearSQL:function(){
@@ -197,7 +473,7 @@ export default {
         },
 
         pre_addValue:function(){
-            if(this.name == "__TEST__" || this.name == ""){
+            if(this.name == "NULL" || this.name == ""){
                 alert("Table Assigned Required");
                 return;
             }
@@ -276,6 +552,6 @@ export default {
                 this.dialog.dir_set=false;
             },()=>{alert('Dir Change Failed')},(res)=>{alert(res.status)});
         },
-    },
+    }
 }
 </script>
