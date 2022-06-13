@@ -2,10 +2,10 @@
     <v-container>
         <v-row class="mx-4 mb-4">
             <v-col class="text-left">
-                <span class="text-h3 font-weight-medium">
+                <span class="grey--text text--darken-3 text-h3 font-weight-medium">
                     {{items[rate]}}
                 </span>
-                <span class="subheading font-weight-light mr-1">TIMES</span>
+                <span class="subheading grey--text font-weight-light mr-1">TIMES</span>
             </v-col>
             <v-col cols="3" class="text-right mr-3">
                 <v-avatar

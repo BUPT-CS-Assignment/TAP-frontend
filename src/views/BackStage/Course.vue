@@ -3,7 +3,14 @@
     <v-simple-table class="ma-2" dense height="230px">
         <tbody>
             <tr v-for="(item,index) in list" :key="index">
-                <td style="border:0px;">{{item}}</td>
+                <td style="border:0px">
+                    <v-card class="d-flex justify-center align-center" 
+                        min-height="30" elevation="0" style="background:none;">
+                        <span class="teal--text text--lighten-2 font-weight-black mr-4">{{index+1}}</span>
+                        <span class="grey--text font-weight-bold text--darken-1 mr-2">{{item.id}}</span>
+                        <span class="grey--text font-weight-bold ml-auto">{{item.name}}</span>
+                    </v-card>
+                </td>
             </tr>
         </tbody>
     </v-simple-table>
@@ -86,16 +93,29 @@ export default {
                     {t:false},{t:false},{t:false},{t:false}],
     }),
     created() {
-
+        this.getList();
     },
     methods: {
-       addCourse:function(){
+        getList:function(){
+            this.$get('/api/course','','list',(res)=>{
+                this.list=[];
+                var list = res.data.list.split(";");
+                console.log(list);
+                for(var i=0; i < list.length;i++){
+                    var info = list[i].split(',');
+                    var course={id:info[0],name:info[1]};
+                    this.list.push(course);
+                }
+            },()=>{},(res)=>{alert(res.status)})
+        },
+        addCourse:function(){
             // course_detail:{id:0,name:'',week:0,intro:''}, 
             var detail = this.input.id + ","
                         + this.input.name + ","
                         +this.input.week;
             console.log(detail);
             this.$post('/api/course',detail + ";"+this.input.intro,'',"new",()=>{
+                this.getList();
                 this.dialog=false;
             },(res)=>{alert(res.headers.msg)},()=>{});
         },

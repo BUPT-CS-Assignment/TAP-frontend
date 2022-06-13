@@ -69,7 +69,7 @@
                 </v-card>
                 <v-row justify="center" class="mt-2">
                     <v-card width="340" height="300" class="mx-4 my-2 rounded-0">
-                        <v-card-title class="text-h5 font-weight-bold mt-2 ml-6">
+                        <v-card-title class="grey--text text--darken-3 text-h5 font-weight-bold mt-2 ml-6">
                             CLOCK RATE
                         </v-card-title>
                         <Clock class="mt-4"></Clock>

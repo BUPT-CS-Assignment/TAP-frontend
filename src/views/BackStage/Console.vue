@@ -80,6 +80,13 @@
                                         >DELETE
                                         </v-btn>
                                     </v-card-title>
+                                    <v-card style="position:absolute;left:0;top:0;bottom:0"
+                                        color="grey lighten-4" width="5" elevation="0" class="rounded-0"
+                                    ></v-card>
+
+                                    <v-card style="position:absolute;right:0;top:0;bottom:0"
+                                        color="grey lighten-4" width="5" elevation="0" class="rounded-0"
+                                    ></v-card>
                                 </v-card>
                             </td>
                         </tr>
