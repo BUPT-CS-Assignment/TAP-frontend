@@ -10,7 +10,7 @@ import BackStage from '../views/BackStage/Main.vue'
 
 /* Home */
 import HomeMain from '../views/Home/Main.vue'
-import HomeDetail from '../views/Home/Detail.vue'
+// import HomeDetail from '../views/Home/Detail.vue'
 
 /* Schedule */
 import ScheMain from '../views/Schedule/Main.vue'
@@ -34,7 +34,7 @@ const routes = [
 
     {path:'/home/overview',component:HomeMain},
     {path:'/home',redirect:'/home/overview'},
-    {path:'/home/detail',component:HomeDetail},
+    // {path:'/home/detail',component:HomeDetail},
 
     {path:'/schedule',redirect:'/schedule/timetable'},
     {path:'/schedule/events',component:ScheMain},

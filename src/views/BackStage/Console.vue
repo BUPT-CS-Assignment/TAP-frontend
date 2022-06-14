@@ -47,6 +47,11 @@
     
     <v-row class="mt-14 ml-9">
         <span class="text-h5 grey--text font-weight-black">DATABASE</span>
+        <span>
+            <v-btn text color="grey" class="rounded-lg mt-1" small @click="getList()">
+                <v-icon>mdi-refresh</v-icon>
+            </v-btn>
+        </span>
     </v-row>
 
 <!-- Table Control -->

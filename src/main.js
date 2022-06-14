@@ -20,14 +20,13 @@ var user={
     email:'test@noui.cloud',
     gender:'女',
     school:'测试学院',
+    schoolid:100,
     major:'测试专业',
-    classid:'2022111000'
+    majorid:100,
+    classid:2022111000
 }
 
-var timetable={
-    table:[],
-    detail:[],
-}
+var timetable={courses:[],table:[]}
 
 var introduction={
     school:'School Introduction',
@@ -44,12 +43,20 @@ var month_day=[0,31,28,31,30,31,30,31,31,30,31,30,31];
 
 var colors=['blue', 'indigo', 'green','orange', 'blue-grey'];
 
+var course_list={data:[{id:'1201',name:'course'}]}
+var course_item={data:['1201,course']}
+
+var course_choose = 0;
+
 Vue.prototype.$USER=user
 Vue.prototype.$TABLE=timetable
 Vue.prototype.$INTRO=introduction
 Vue.prototype.$EVENTS=events
 Vue.prototype.$SYSTIME=sys_time
 Vue.prototype.$TODAY=sys_today
+Vue.prototype.$COURSELIST = course_list
+Vue.prototype.$COURSEITEM = course_item
+Vue.prototype.$COURSECHOOSE = course_choose
 
 /**
  * Global Function
@@ -72,7 +79,9 @@ function getUser(){
             this.$USER.name  = res.name;
             this.$USER.gender = (res.gender==1?'男':'女');
             this.$USER.school = res.school;
+            this.$USER.schoolid = res.schoolid;
             this.$USER.major = res.major;
+            this.$USER.majorid = res.majorid;
             this.$USER.classid = res.classid;
         }else{
             console.log(xhttp.getResponseHeader("msg"));
@@ -83,25 +92,69 @@ function getUser(){
 }
 
 function tableInit(){
-    this.$TABLE.table = Array.from(Array(14),()=>new Int32Array(5));
+    timetable.table = Array.from(Array(14),()=>new Int32Array(5));
 }
 
-function getTable(){
-    this.$get('/api/timetable','','fetch',(res)=>{
-        this.$TABLE.detail = [];
-        this.$TABLE.detail.push('');
-        res.data.detail.forEach(element => {
-            this.$TABLE.detail.push(element)
-        });
-        res.data.basic.forEach(course => {
-            for(var day = 0; day < course.timeCode.length; day++){
-                var code = course.timeCode[day] << 1;
-                for(var timeP =0; timeP <14; timeP++){
+function week_format(wcode){
+    if(wcode == 65535)  return "1-16周"
+    var format = "";
+    for(var i = 0;i<16;i++){
+        if(wcode & 0x1 == 1){
+            format += (i+1)+",";
+        }
+        wcode >>= 1;
+    }
+    format = format.substring(0,format.length-1);
+    return format+"周";
+}
+
+var day_items=['[周一]','[周二]','[周三]','[周四]','[周五]']
+
+function day_format(tcode){
+    var format = "";
+    for(var i = 0;i < 5;i++){
+        var temp = "";
+        var code = tcode[i];
+        for(var j=0;j<14;j++){
+            if(code & 0x1 == 1){
+                if(temp == "") temp = day_items[i]
+                temp += (j+1)+","
+            }
+            code >>= 1
+        }
+        console.log(temp);
+        if(temp != ""){
+            temp = temp.substring(0,temp.length-1);
+            temp += "节";
+            format += temp+","
+        }
+    }
+    format = format.substring(0,format.length-1);
+    return format;
+}
+
+function getTable(url,classid){
+    this.$get(url,{'classid':classid},'timetable',(res)=>{
+        console.log(res);
+        timetable.courses = [{id:'null'}];
+        tableInit();
+        var courses = res.data.courses;
+        for(var i = 0;i<courses.length;i++){
+            for(var j = 0;j<5;j++){
+                var code = courses[i].tcode[j];
+                for(var k = 0; k < 14; k++){
+                    if(code & 0x1 == 1){
+                        timetable.table[k][j] = i+1;
+                    }
                     code >>= 1;
-                    if(code & 0x1 == 1) this.$TABLE.table[timeP][day] = course.pos;
                 }
             }
-        });
+            courses[i].week = week_format(courses[i].wcode);
+            courses[i].day = day_format(courses[i].tcode);
+            courses[i].intro = "null";
+            timetable.courses.push(courses[i]);
+        }
+        console.log(timetable);
     },()=>{},()=>{});
 }   
 
@@ -213,6 +266,15 @@ function getTime(){
     })
 }
 
+function time_format(time){
+    //202206150814
+    var format = time.substring(0,4)+"/"
+    format += time.substring(4,6)+"/"
+    format += time.substring(6,8)+" "
+    format += time.substring(8,10)+":"
+    format += time.substring(10,12);
+    return format;
+}
 
 function Signout(){
     localStorage.removeItem('userid');
@@ -242,6 +304,7 @@ Vue.prototype.$getEvents=getEvents;
 Vue.prototype.$tableInit=tableInit;
 Vue.prototype.$signout=Signout;
 Vue.prototype.$access=Access;
+Vue.prototype.$timeFormat=time_format;
 
 
 new Vue({

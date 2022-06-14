@@ -88,7 +88,7 @@ export default {
     data: () => ({
         time:Vue.prototype.$SYSTIME,
         user:Vue.prototype.$USER,
-        list:['USER'],
+        list:[{id:100,name:'User'}],
         auth_items:['学生','学生干部','教师','管理员'],
         input:{id:0,name:'',auth:'学生',gender:'女',school:0,major:0,classid:0},
         dialog:false,

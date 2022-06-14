@@ -59,7 +59,7 @@
                     </v-card>
                 <!-- NEW SIGNUP -->
                     <v-card width="340" height="300" class="mx-4 my-2 rounded-0">
-
+                        <Class></Class>
                     </v-card>
                 </v-row>
             </v-tab-item>
@@ -98,6 +98,7 @@ import Clock from '@/views/BackStage/Clock.vue'
 import User from '@/views/BackStage/User.vue'
 import Course from '@/views/BackStage/Course.vue'
 import Console from '@/views/BackStage/Console.vue'
+import Class from '@/views/BackStage/Class.vue'
 
 export default {
     name: 'BackStage',
@@ -107,7 +108,7 @@ export default {
         tabs:["0","1"],
     }),
     components:{
-        Clock,User,Course,Console,
+        Clock,User,Course,Console,Class,
     },
     created() {
         if(!this.$access('3')){

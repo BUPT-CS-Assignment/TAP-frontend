@@ -25,7 +25,7 @@
                     <v-btn outlined color="grey darken-2"><span>Add</span></v-btn>
                 </v-toolbar>
             </v-sheet>
-            <v-sheet height="600">
+            <v-sheet>
                 <v-calendar ref="calendar" type="week" color="primary"
                     v-model="focus"
                     :now="today" :value="today"

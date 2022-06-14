@@ -172,8 +172,11 @@ export default {
         },
         init:function(){
             this.$getUser();
-            this.$tableInit();
-            this.$getTable();
+            if(this.$USER.id != 10000){
+                this.$tableInit();
+                this.$getTable('/api/user');
+                this.$getEvents();
+            }
         }
     },
 }

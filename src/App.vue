@@ -83,7 +83,7 @@
         </span>
         <v-container 
             class="py-0 d-flex justify-center align-self-center"
-            v-if="cur_link!=4"
+            v-if="cur_link!=4 && cur_link != 2"
         >
             <v-btn-toggle>
                 <v-btn  v-for="[text,to] in sec_links[cur_link]"
@@ -98,6 +98,62 @@
                 <v-icon class="ml-3" small>mdi-text-long</v-icon>
                 </v-btn> 
             </v-btn-toggle>
+        </v-container>
+        <v-container 
+            class="py-0 d-flex justify-center align-self-center"
+            v-if="cur_link == 2"
+        >
+            <v-menu
+                bottom offset-y rounded="lg"
+                origin="center center"
+                transition="slide-y-transition"
+            >
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                    outlined
+                    max-height=30
+                    class="pl-4 pr-4 text-overline font-weight-bold"
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                <span v-if="choose == 0">
+                    所有课程
+                </span>
+                <span v-if="choose != 0">
+                    {{table.courses[choose].name}}
+                </span>
+                <v-icon class="ml-3" small>mdi-text-long</v-icon>
+                </v-btn>
+            </template>
+
+            <v-list dense flat >
+                <v-list-item>
+                    <v-btn text rounded small @click="setChoose(0)" 
+                        class="mx-auto font-weight-bold"
+                    >所有课程
+                    </v-btn>
+                </v-list-item>
+                <template v-for="(item, index) in table.courses" >
+                    <v-list-item v-if="index != 0" :key="index">
+                    <v-btn text small rounded class="mx-auto font-weight-bold" @click="setChoose(index)"
+                    >{{item.name}}</v-btn>
+                    </v-list-item>
+                </template>
+                
+                
+            </v-list>
+            </v-menu>
+                <!-- <v-btn  v-for="[text,to] in sec_links[cur_link]"
+                    :key="text"
+                    :to="to"
+                    link
+                    outlined
+                    max-height=30
+                    class="pl-4 pr-4 text-overline font-weight-bold"
+                >
+                {{ text }}
+                <v-icon class="ml-3" small>mdi-text-long</v-icon>
+                </v-btn>  -->
         </v-container>
         <v-menu
             bottom
@@ -165,7 +221,7 @@
 <!-- Main Page -->
     <v-main style="background-color:#FAFAFA">
         <v-container fluid class="ma-0 pa-0">
-            <router-view 
+            <router-view v-if="isReload"
                 class="ma-0 pa-0"
             ></router-view>
         </v-container>
@@ -174,13 +230,16 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-    export default {
-        name:"app",
-        data: () => ({
+import Vue from 'vue';
+export default {
+    name:"app",
+    data: () => ({
         cur_link:0,
+        isReload:true,
         user:Vue.prototype.$USER,
         time:Vue.prototype.$SYSTIME,
+        table:Vue.prototype.$TABLE,
+        choose:Vue.prototype.$COURSECHOOSE,
         links: [
             ['主页','/home','mdi-account-circle','info'],
             ['日程','/schedule','mdi-calendar-check','orange'],
@@ -188,62 +247,73 @@
             ['导航','/map','mdi-map-marker-radius','blue-grey'],
         ],
         sec_links:[
-            [['概览','/home/overview'],['详情','/home/detail']],
+            [['概览','/home/overview']],
             [['课程安排','/schedule/timetable'],['活动列表','/schedule/events']],
             [['课程信息','/courses/index']],
             [['校园导航','/map/navigation'],['地图概览','/map/overview']],
         ],
-        }),
-        mounted() {
-            //Vue.prototype.$getTime();
-        },
-        created(){
-            var path = window.location.hash;
-            path = path.substring(2);
+    }),
+    mounted() {
+        //Vue.prototype.$getTime();
+    },
+    created(){
+        var path = window.location.hash;
+        path = path.substring(2);
+        var idx = path.indexOf('/');
+        if(idx != -1)   path = path.substring(0,idx);
+        this.cur_link = this.router_parse(path);
+        Vue.prototype.$getTime();
+        if(!this.$access('0')){
+            console.log('ACCESS_DENIED');
+            this.$router.push('/auth');
+        }else{
+            this.$getUser();
+            if(this.$USER.id != 10000){
+                this.$tableInit();
+                this.$getTable('/api/user');
+                this.$getEvents();
+            }
+        }
+    },
+    watch:{
+        '$route.path':function(to){
+            var path = to.substring(1);
             var idx = path.indexOf('/');
             if(idx != -1)   path = path.substring(0,idx);
             this.cur_link = this.router_parse(path);
-            Vue.prototype.$getTime();
-            if(!this.$access('0')){
-                console.log('ACCESS_DENIED');
-                this.$router.push('/auth');
-            }else{
-                this.$getUser();
-                if(this.$USER.id != 10000){
-                    this.$tableInit();
-                    this.$getTable();
-                    this.$getEvents();
+            if(this.cur_link != 4){
+                if(!this.$access('0')){
+                    this.$router.push('/auth');
                 }
             }
-        },
-        watch:{
-            '$route.path':function(to){
-                var path = to.substring(1);
-                var idx = path.indexOf('/');
-                if(idx != -1)   path = path.substring(0,idx);
-                this.cur_link = this.router_parse(path);
-                if(this.cur_link != 4){
-                    if(!this.$access('0')){
-                        this.$router.push('/auth');
-                    }
-                }
-                
+            
+        }
+    },
+    methods: {
+        router_parse:function(path){
+            switch(path){
+                case 'home':return 0;
+                case 'schedule':return 1;
+                case 'courses':return 2;
+                case 'map':return 3;
+                default: return 4;
             }
         },
-        methods: {
-            router_parse:function(path){
-                switch(path){
-                    case 'home':return 0;
-                    case 'schedule':return 1;
-                    case 'courses':return 2;
-                    case 'map':return 3;
-                    default: return 4;
-                }
-            },
-            Signout:function(){
-                Vue.prototype.$signout();
-                this.$router.push('/auth');
-            },
+        Signout:function(){
+            Vue.prototype.$signout();
+            this.$router.push('/auth');
         },
-    }
+        setChoose(id){
+            Vue.prototype.$COURSECHOOSE = id;
+            this.Reload();
+        },
+        Reload(){
+            this.choose = Vue.prototype.$COURSECHOOSE;
+            this.isReload = false;
+            this.$nextTick(()=>{
+                this.isReload = true;
+            })
+        }
+    },
+}
 </script>
