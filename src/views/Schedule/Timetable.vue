@@ -17,7 +17,12 @@
                 <td v-for="(val,index) in value" :key="index" class="text-center">
                     <span v-if="val>0">
                         {{table.courses[val].name}}<br>
-                        {{table.courses[val].profname}}<br>
+                        <template v-if="user.auth < 2">
+                            {{table.courses[val].profname}}<br>
+                        </template>
+                        <template v-else>
+                            {{table.courses[val].class}}<br>
+                        </template>
                         {{table.courses[val].location}}<br>
                         {{table.courses[val].week}}
                     </span>
@@ -35,6 +40,7 @@ export default {
     name: 'TimeTable',
     data: () => ({
         table:Vue.prototype.$TABLE,
+        user:Vue.prototype.$USER,
     }),
     created(){
 

@@ -4,11 +4,17 @@
         <tbody>
             <tr v-for="(item,index) in list.data" :key="index">
                 <td style="border:0px">
-                    <v-card class="d-flex justify-center align-center" 
+                    <v-card class="d-flex justify-center align-center"
                         min-height="30" elevation="0" style="background:none;">
                         <span class="teal--text text--lighten-2 font-weight-black mr-4">{{index+1}}</span>
-                        <span class="grey--text font-weight-bold text--darken-1 mr-2">{{item.id}}</span>
+                        <v-btn class="grey--text font-weight-bold text--darken-1 mr-2 rounded-lg pl-1"
+                            text  @click="checkExam(item.id)"
+                        >{{item.id}}
+                        </v-btn>
                         <span class="grey--text font-weight-bold ml-auto">{{item.name}}</span>
+                        <v-btn small text color="teal lighten-2" @click="course_choose=item.id;exam_add=true;">
+                            <v-icon>mdi-clipboard-edit-outline</v-icon>
+                        </v-btn>
                     </v-card>
                 </td>
             </tr>
@@ -104,6 +110,94 @@
         </v-card>
     </v-dialog>
 
+<!-- Add Exam -->
+    <v-dialog v-model="exam_add" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5 ml-1">New Exam For {{course_choose}}</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row class="mx-auto">
+                    <v-col cols="3">
+                        <v-text-field outlined dense label="School" v-model="exam.school">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="3">
+                        <v-text-field outlined dense label="ID" v-model="exam.id">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="Name" v-model="exam.name">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="Start" v-model="exam.start">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="End" v-model="exam.end">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="Location" v-model="exam.location">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="Room" v-model="exam.room">
+                        </v-text-field>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="exam_add=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="addExam();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- Check Exam -->
+    <v-dialog v-model="exam_check" persistent min-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5">ExamTable For {{course_choose}}</v-card-title>
+            <v-container fluid class="px-6">
+                <v-simple-table class="mr-6"  fixed-header>
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Start</th>
+                            <th class="text-center">End</th>
+                            <th class="text-center">Location</th>
+                            <th class="text-center">Room</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item,index) in exams.data" :key="index" class="text-center">
+                            <td>{{item.id}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.start}}</td>
+                            <td>{{item.end}}</td>
+                            <td>{{item.location}}</td>
+                            <td>{{item.room}}</td>
+                        </tr>
+                    </tbody>
+                </v-simple-table>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="exam_check=false;"
+                >Close
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
 </v-container>
 </template>
 
@@ -118,7 +212,12 @@ export default {
         list:Vue.prototype.$COURSELIST,
         dialog:false,
         week_set:false,
+        exam_add:false,
+        exam_check:false,
+        exams:{data:[{id:'',name:'',start:'',end:'',loc:'',room:''}]},
+        course_choose:0,
         input:{id:0,name:'',week:0,intro:''}, 
+        exam:{school:'',id:'',name:'',start:'',end:'',location:'',room:''},
         week:[{t:false},{t:false},{t:false},{t:false},
                     {t:false},{t:false},{t:false},{t:false},
                     {t:false},{t:false},{t:false},{t:false},
@@ -128,7 +227,7 @@ export default {
         this.getList();
     },
     methods: {
-        getList:function(){
+        getList(){
             this.$get('/api/course','','list',(res)=>{
                 Vue.prototype.$COURSELIST.data=res.data.data;
                 Vue.prototype.$COURSEITEM.data=[];
@@ -137,7 +236,7 @@ export default {
                 }
             },()=>{},(res)=>{alert(res.status)})
         },
-        setWeek:function(){
+        setWeek(){
             var code = 0;
             for(var i = 15; i >= 0; i--){
                 if(this.week[i].t){
@@ -147,7 +246,7 @@ export default {
             this.input.week = code;
             this.week_set  = false;
         },
-        addCourse:function(){
+        addCourse(){
             // course_detail:{id:0,name:'',week:0,intro:''}, 
             var detail = this.input.id + ","
                         + this.input.name + ","
@@ -158,6 +257,26 @@ export default {
                 this.dialog=false;
             },(res)=>{alert(res.headers.msg)},()=>{});
         },
+        addExam(){
+            if(this.exam.school.length != 3 || this.exam.id.length != 4){
+                alert('Invalid Exam ID');
+                return;
+            }
+            //id int,name text,start int,end int,loc int,room int
+            var detail = this.exam.school + '' + this.exam.id + "," + this.exam.name+ ","+this.exam.start+","
+                        +this.exam.end + "," +this.exam.location+","+this.exam.room;
+            this.$post('/api/course',detail,{'courseid':this.course_choose},"addexam",()=>{
+                this.exam_add = false;
+            },(res)=>{console.log(res.headers.msg)},()=>{});
+        },
+        checkExam(id){
+            this.course_choose = id;
+            this.exams.data=[];
+            this.exam_check = true;
+            this.$get('/api/course',{'courseid':id},"getexam",(res)=>{
+                this.exams.data = res.data.exam;
+            },()=>{},()=>{});
+        }
     },
 }
 </script>

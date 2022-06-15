@@ -229,21 +229,28 @@ export default {
             },()=>{},()=>{});
         },
         getIntro:function(){
-            this.$get('/api/class',{'classid':this.user.classid},'intro',
-                (res)=>{
-                    this.intro.classid = res.data;
-                },()=>{},()=>{}
-            );
             this.$get('/api/school',{'school':this.user.schoolid},'intro',
                 (res)=>{
                     this.intro.school = res.data;
                 },()=>{},()=>{}
             );
-            this.$get('/api/major',{'major':this.user.majorid},'intro',
-                (res)=>{
-                    this.intro.major = res.data;
-                },()=>{},()=>{}
-            );
+
+            if(this.user.classid != 0){
+                this.$get('/api/class',{'classid':this.user.classid},'intro',
+                    (res)=>{
+                        this.intro.classid = res.data;
+                    },()=>{},()=>{}
+                );
+            }
+            
+            if(this.user.majorid != 0){
+               this.$get('/api/major',{'major':this.user.majorid},'intro',
+                    (res)=>{
+                        this.intro.major = res.data;
+                    },()=>{},()=>{}
+                ); 
+            }
+            
         }
     },
 }

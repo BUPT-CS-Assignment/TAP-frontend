@@ -287,7 +287,8 @@ export default {
                 }
             }
             
-        }
+        },
+        
     },
     methods: {
         router_parse:function(path){

@@ -1,68 +1,5 @@
 <template>
 <v-container class="px-8 pt-4">
-    <!-- <v-container class="pr-10">
-        <template>
-        <v-row class="fill-height">
-            <v-col>
-            <v-sheet height="64">
-                <v-toolbar flat>
-                <v-btn outlined class="mr-4" color="grey darken-2"
-                    @click="setToday()"
-                >今天
-                </v-btn>
-                <v-btn fab text small color="grey darken-2"
-                    @click="prev()"
-                ><v-icon small>mdi-chevron-left</v-icon>
-                </v-btn>
-                <v-btn fab text small color="grey darken-2"
-                    @click="next"
-                ><v-icon small>mdi-chevron-right</v-icon>
-                </v-btn>
-                <v-toolbar-title v-if="$refs.calendar">
-                    {{ $refs.calendar.title }}
-                </v-toolbar-title>
-                <v-spacer></v-spacer>
-                    <v-btn outlined color="grey darken-2"><span>Add</span></v-btn>
-                </v-toolbar>
-            </v-sheet>
-            <v-sheet>
-                <v-calendar ref="calendar" type="week" color="primary"
-                    v-model="focus"
-                    :now="today" :value="today"
-                    :events="events.data" :event-color="getColor"
-                    @click:event="showEvent"
-                ></v-calendar>
-                <v-menu offset-x
-                    v-model="selectedOpen"
-                    :close-on-content-click="false"
-                    :activator="selectedElement"
-                >
-                <v-card color="grey lighten-4" min-width="350px" class="pb-3 rounded-lg" flat>
-                    <v-toolbar :color="selectedEvent.color" elevation="0">
-                        <v-toolbar-title class="white--text font-weight-bold">
-                            {{selectedEvent.name}}
-                        </v-toolbar-title>
-                        <v-spacer></v-spacer>
-                        <v-btn icon color="white">
-                            <v-icon>mdi-delete-off</v-icon>
-                        </v-btn>
-                    </v-toolbar>
-                    <v-card-text>
-                        <span v-html="selectedEvent.describe"></span>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn text color="secondary"
-                            @click="selectedOpen = false"
-                        >Back
-                        </v-btn>
-                    </v-card-actions> 
-                </v-card>
-                </v-menu>
-            </v-sheet>
-            </v-col>
-        </v-row>
-        </template>
-    </v-container> -->
 <v-row v-if="user.auth < 2">
     <v-col>
         <v-card min-height="200" rounded="lg" elevation="6">
@@ -76,21 +13,40 @@
                 </v-btn>
             </v-toolbar>
             <v-row class="px-4 pt-4">
-                <template v-for="(item,index) in events">
+                <template v-for="(item,index) in events.data">
                     <v-col v-if="item.id < 10000" :key="index">
-                        <v-card elevation="0">
+                        <v-card elevation="0" class="px-2">
                             <v-row>
-                                <v-col>
-                                    <span>{{item.name}}</span>
+                                <v-col cols="3">
+                                    <v-menu open-on-hover offset-y bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                        <v-btn color="blue-grey" text class="ma-0 pa-0 pb-3"
+                                            v-bind="attrs" v-on="on"
+                                        ><v-icon class="mr-4">mdi-account-multiple</v-icon>
+                                            <span class="text-subtitle-1 font-weight-bold">{{item.name}}</span>
+                                        </v-btn>
+                                        </template>
+                                        <v-card min-width="100" min-height="100" max-width="300" rounded="lg" 
+                                            class="pa-3" elevation="3"
+                                        >   <span class="font-weight-bold mr-4">地点</span>
+                                            <span>{{item.location}}</span><br>
+                                            <span class="font-weight-bold mr-4 mt-2">详情</span>
+                                            <span>{{item.info}}</span>
+                                        </v-card>
+                                    </v-menu>
+                                    
                                 </v-col>
-                                <v-col>
-                                    <span>{{item.location}}</span>
+                                <!-- <v-col cols="2">
+                                    <span class="font-weight-bold grey--text">{{item.location}}</span>
+                                </v-col> -->
+                                <v-col cols="3">
+                                    <span class="font-weight-bold grey--text">{{item.start}}</span>
                                 </v-col>
-                                <v-col>
-                                    <span>{{item.start}}</span>
+                                <v-col cols="3">
+                                    <span class="font-weight-bold grey--text">{{item.end}}</span>
                                 </v-col>
-                                <v-col>
-                                    <span>{{item.end}}</span>
+                                <v-col cols="3">
+                                    <span class="font-weight-bold green--text">{{item.status}}</span>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -114,21 +70,40 @@
                 </v-btn>
             </v-toolbar>
             <v-row class="px-4 pt-4">
-                <template v-for="(item,index) in events">
+                <template v-for="(item,index) in events.data">
                     <v-col v-if="item.id > 10000" :key="index">
-                        <v-card elevation="0">
+                        <v-card elevation="0" class="px-2">
                             <v-row>
-                                <v-col>
-                                    <span>{{item.name}}</span>
+                                <v-col cols="3">
+                                    <v-menu open-on-hover offset-y bottom>
+                                        <template v-slot:activator="{ on, attrs }">
+                                        <v-btn color="blue-grey" text class="ma-0 pa-0 pb-3"
+                                            v-bind="attrs" v-on="on"
+                                        ><v-icon class="mr-4">mdi-account</v-icon>
+                                            <span class="text-subtitle-1 font-weight-bold">{{item.name}}</span>
+                                        </v-btn>
+                                        </template>
+                                        <v-card min-width="100" min-height="100" max-width="300" rounded="lg" 
+                                            class="pa-3" elevation="3"
+                                        >   <span class="font-weight-bold mr-4">地点</span>
+                                            <span>{{item.location}}</span><br>
+                                            <span class="font-weight-bold mr-4 mt-2">详情</span>
+                                            <span>{{item.info}}</span>
+                                        </v-card>
+                                    </v-menu>
+                                    
                                 </v-col>
-                                <v-col>
-                                    <span>{{item.location}}</span>
+                                <!-- <v-col cols="2">
+                                    <span class="font-weight-bold grey--text">{{item.location}}</span>
+                                </v-col> -->
+                                <v-col cols="3">
+                                    <span class="font-weight-bold grey--text">{{item.start}}</span>
                                 </v-col>
-                                <v-col>
-                                    <span>{{item.start}}</span>
+                                <v-col cols="3">
+                                    <span class="font-weight-bold grey--text">{{item.end}}</span>
                                 </v-col>
-                                <v-col>
-                                    <span>{{item.end}}</span>
+                                <v-col cols="3">
+                                    <span class="font-weight-bold green--text">{{item.status}}</span>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -196,7 +171,7 @@ export default {
         time:Vue.prototype.$SYSTIME,
         today:Vue.prototype.$TODAY,
         user:Vue.prototype.$USER,
-        events: Vue.prototype.$EVENTS.data,
+        events: Vue.prototype.$EVENTS,
         // {"id",stoi(id)},
         // {"name",name.c_str()},
         // {"start",start.c_str()},
@@ -216,13 +191,12 @@ export default {
             }else{
                 min = 0;    max = 10000;
             }
-            for(var i=0;i < this.events.length;i++){
-                if(this.events[i].id > min && this.events[i].id < max) all++;
+            for(var i=0;i < this.events.data.length;i++){
+                if(this.events.data[i].id > min && this.events.data[i].id < max) all++;
             }
             var detail = (min + all)+ ",";
             detail +=  this.input.start + "," + this.input.end + "," 
                     +this.input.loc + "," + this.input.name + "," +this.input.info;
-            console.log(detail);
             this.$post('/api/event',detail,'','new',()=>{
                 this.$getEvents();
                 this.dialog = false;
@@ -231,7 +205,7 @@ export default {
 
     },
     created(){
-
+        this.$getEvents();
     }
 }
 </script>

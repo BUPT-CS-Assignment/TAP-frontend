@@ -43,7 +43,7 @@ var month_day=[0,31,28,31,30,31,30,31,31,30,31,30,31];
 
 var colors=['blue', 'indigo', 'green','orange', 'blue-grey'];
 
-var course_list={data:[{id:'1201',name:'course'}]}
+var course_list={data:[{id:'000',name:'course'}]}
 var course_item={data:['1201,course']}
 
 var course_choose = 0;
@@ -135,12 +135,24 @@ function day_format(tcode){
 
 function time_format(time){
     //202206150814
+    if(time == "0") return "0"
     var format = time.substring(0,4)+"/"
     format += time.substring(4,6)+"/"
     format += time.substring(6,8)+" "
     format += time.substring(8,10)+":"
     format += time.substring(10,12);
     return format;
+}
+
+function time_string(){
+   //var sys_time={year:2022,month:1,day:1,hour:0,min:0,ratio:1,runID:0};
+   var format = sys_time.year + "";
+   format += ((sys_time.month < 10 ? '0':'') + sys_time.month);
+   format += ((sys_time.day < 10 ? '0':'') + sys_time.day);
+   format += ((sys_time.hour < 10 ? '0':'') + sys_time.hour);
+   format += ((sys_time.min < 10 ? '0':'') + sys_time.min);
+   return format;
+
 }
 
 function getTable(url,classid){
@@ -162,6 +174,9 @@ function getTable(url,classid){
             courses[i].week = week_format(courses[i].wcode);
             courses[i].day = day_format(courses[i].tcode);
             courses[i].intro = "null";
+            courses[i].homework=[];
+            courses[i].exam=[];
+            courses[i].files=[];
             timetable.courses.push(courses[i]);
         }
         console.log(timetable);
@@ -173,6 +188,11 @@ function getEvents(){
         events.data=[];
         res.data.events.forEach(element => {
             //202201010800
+            var sta;
+            var now = time_string();
+            if(element.end <= now) sta = '已结束';
+            else if(element.start > now) sta = '未开始';
+            else sta = '进行中'
             var new_event={
                 id:Number(element.id),
                 name:element.name,
@@ -180,6 +200,7 @@ function getEvents(){
                 end:time_format(element.end),
                 location:element.loc,
                 info:element.info,
+                status:sta
             }
             var num = Math.floor(Math.random() * (colors.length - 1));
             new_event.color = colors[num];
@@ -306,6 +327,7 @@ Vue.prototype.$tableInit=tableInit;
 Vue.prototype.$signout=Signout;
 Vue.prototype.$access=Access;
 Vue.prototype.$timeFormat=time_format;
+Vue.prototype.$timeString=time_string;
 
 
 new Vue({
