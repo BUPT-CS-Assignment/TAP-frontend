@@ -11,8 +11,7 @@ export default {
   name: 'IndexView',
   data: () => ({
         links: [
-            ['MAIN',''],
-            ['DETAIL','detail'],
+
         ],
         }),
 }

@@ -14,25 +14,13 @@
             color="transparent"
         >
             <p class="text-body-1 font-weight-bold ml-1 my-1">账号信息</p>
-            <v-card
-                class="rounded-lg d-flex justify-center flex-column"
-                width="440px"
-                height="260px"  
+            <v-card class="rounded-lg d-flex justify-center flex-column"
+                width="440px" height="260px"  
             >
             <!-- Card One -->
-                <v-avatar 
-                    class="mx-auto"
-                    color="grey lighten-2"
-                    size="82"
-                >
-                    <v-avatar
-                        color="white"
-                        size="80"
-                    >
-                        <v-avatar   
-                            color="blue lighten-1"    
-                            size="70"
-                        >
+                <v-avatar class="mx-auto" color="grey lighten-2" size="82">
+                    <v-avatar color="white" size="80">
+                        <v-avatar color="blue lighten-1" size="70">
                             <span class="white--text text-h4 font-weight-bold text-uppercase">
                                 {{ user.name[0] }}
                             </span>
@@ -41,7 +29,7 @@
                 </v-avatar>
                 <span class="mx-auto text-subtitle-1 font-weight-medium mt-3">
                     {{user.name}}
-                    <span class="grey--text text-subtitle-2 ml-2">
+                    <span class="grey--text text-subtitle-2 ml-2 mb-1">
                         {{authText[user.auth]}}
                     </span>
                 </span>
@@ -53,14 +41,9 @@
                 </span>
             </v-card>
         </v-card>
-        <v-card
-            width="440px"   height="260px"
-            elevation="0"   
-            color="transparent"
-        >
+        <v-card width="440px"   height="260px"  elevation="0" color="transparent">
             <p class="text-body-1 font-weight-bold ml-1 my-1">院系信息</p>
-            <v-card
-                width="440px"   height="260px"  
+            <v-card width="440px"   height="260px"  
                 class="rounded-lg d-flex justify-center flex-column pt-4"
             >
             <!-- Card Two -->
@@ -76,7 +59,7 @@
                                     {{user.school}}
                                 </span>
                                 <template v-slot:actions>
-                                    <v-icon color="green">  mdi-bank    </v-icon>
+                                    <v-icon color="green">mdi-bank</v-icon>
                                 </template>
                             </v-expansion-panel-header>
                             <v-expansion-panel-content>
@@ -84,7 +67,7 @@
                             </v-expansion-panel-content>
                         </v-expansion-panel>
                     <!-- Major Info -->
-                        <v-expansion-panel :key="2">
+                        <v-expansion-panel :key="2" v-if="user.auth < 2">
                             <v-expansion-panel-header  disable-icon-rotate>
                                 <span class="font-weight-bold">
                                     {{user.major}}
@@ -98,7 +81,7 @@
                             </v-expansion-panel-content>
                         </v-expansion-panel>
                     <!-- Class Info -->
-                        <v-expansion-panel :key="3" >
+                        <v-expansion-panel :key="3" v-if="user.auth < 2">
                             <v-expansion-panel-header  disable-icon-rotate>
                                 <span class="font-weight-bold">
                                     {{user.classid}}
@@ -113,9 +96,7 @@
                         </v-expansion-panel>
                     </v-expansion-panels>  
                 </v-card>
-                <span
-                    class=" text-h2 ml-6
-                            font-weight-black grey--text text--lighten-3"
+                <span class=" text-h2 ml-6 font-weight-black grey--text text--lighten-3"
                     style="position:absolute; top:16px"
                 >BUPT
                 </span>
@@ -155,7 +136,7 @@
                                 :rules="[rules.required, rules.max]"
                                 :type="show_pwd ? 'text' : 'password'"
                                 label="新密码"
-                                :value="input_pwd"
+                                v-model="input_pwd"
                                 hint="长度上限: 16"
                                 class="input-group--focused mx-2"
                                 @click:append="show_pwd = !show_pwd"
@@ -168,7 +149,7 @@
                                 :rules="[rules.required, rules.max]"
                                 :type="show_cfm ? 'text' : 'password'"
                                 label="确认密码"
-                                :value="input_cfm"
+                                v-model="input_cfm"
                                 class="mx-2"
                                 @click:append="show_cfm = !show_cfm"
                             ></v-text-field>
@@ -187,7 +168,7 @@
                         <v-btn
                             color="blue darken-1 font-weight-bold"
                             text
-                            @click="dialog_change = false"
+                            @click="changePassword()"
                         >确定
                         </v-btn>
                     </v-card-actions>
@@ -214,7 +195,7 @@ export default {
     data: () => ({
         user: Vue.prototype.$USER,
         intro: Vue.prototype.$INTRO,
-        authText: ["学生", "学生", "教师"],
+        authText: ["学生", "学生干部", "教授"],
         dialog_change:false,
         show_pwd:false,
         show_cfm:false,
@@ -232,6 +213,20 @@ export default {
         Signout:function(){
             Vue.prototype.$signout();
             this.$router.push('/auth');
+        },
+        changePassword(){
+            var patrn=/^(\w){3,16}$/;  
+            if (!patrn.exec(this.input_pwd)){
+                alert('密码位3-16位字母、数字或下划线组合');
+                return;
+            }
+            if(this.input_pwd != this.input_cfm){       
+                alert('两次输入不一致');
+                return;
+            }
+            this.$post('/api/user',this.input_pwd,'',"pwd",()=>{
+                this.dialog_change = false;
+            },()=>{},()=>{});
         },
         getIntro:function(){
             this.$get('/api/class',{'classid':this.user.classid},'intro',

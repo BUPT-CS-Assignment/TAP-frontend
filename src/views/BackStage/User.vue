@@ -131,7 +131,7 @@ export default {
             console.log(detail);
             this.$post('/api/user',detail,'',"new",()=>{
                 this.getList();
-                this.dialog.user_add=false;
+                this.dialog=false;
             },(res)=>{alert(res.headers.msg)},()=>{});
 
         },

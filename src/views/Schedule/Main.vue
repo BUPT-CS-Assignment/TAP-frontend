@@ -1,6 +1,6 @@
 <template>
-<v-container class="pa-4">
-    <v-container class="pr-10">
+<v-container class="px-8 pt-4">
+    <!-- <v-container class="pr-10">
         <template>
         <v-row class="fill-height">
             <v-col>
@@ -50,19 +50,138 @@
                     <v-card-text>
                         <span v-html="selectedEvent.describe"></span>
                     </v-card-text>
-                    <!-- <v-card-actions>
+                    <v-card-actions>
                         <v-btn text color="secondary"
                             @click="selectedOpen = false"
                         >Back
                         </v-btn>
-                    </v-card-actions> -->
+                    </v-card-actions> 
                 </v-card>
                 </v-menu>
             </v-sheet>
             </v-col>
         </v-row>
         </template>
-    </v-container>
+    </v-container> -->
+<v-row v-if="user.auth < 2">
+    <v-col>
+        <v-card min-height="200" rounded="lg" elevation="6">
+            <v-toolbar short color="grey lighten-3" flat rounded="lg">
+                <v-toolbar-title class="text-h6 font-weight-bold ml-4">
+                    班级活动
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn text rounded v-if="user.auth == 1" @click="event_type=1;dialog=true">
+                    <v-icon large>mdi-plus</v-icon>
+                </v-btn>
+            </v-toolbar>
+            <v-row class="px-4 pt-4">
+                <template v-for="(item,index) in events">
+                    <v-col v-if="item.id < 10000" :key="index">
+                        <v-card elevation="0">
+                            <v-row>
+                                <v-col>
+                                    <span>{{item.name}}</span>
+                                </v-col>
+                                <v-col>
+                                    <span>{{item.location}}</span>
+                                </v-col>
+                                <v-col>
+                                    <span>{{item.start}}</span>
+                                </v-col>
+                                <v-col>
+                                    <span>{{item.end}}</span>
+                                </v-col>
+                            </v-row>
+                        </v-card>
+                    </v-col>
+                </template>
+            </v-row>
+        </v-card>
+    </v-col>
+</v-row>
+
+<v-row class="mt-8">
+    <v-col>
+        <v-card min-height="300" rounded="lg" elevation="6">
+            <v-toolbar short color="grey lighten-3" flat rounded="lg">
+                <v-toolbar-title class="text-h6 font-weight-bold ml-4">
+                    个人活动
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn text rounded @click="event_type=0;dialog=true">
+                    <v-icon large>mdi-plus</v-icon>
+                </v-btn>
+            </v-toolbar>
+            <v-row class="px-4 pt-4">
+                <template v-for="(item,index) in events">
+                    <v-col v-if="item.id > 10000" :key="index">
+                        <v-card elevation="0">
+                            <v-row>
+                                <v-col>
+                                    <span>{{item.name}}</span>
+                                </v-col>
+                                <v-col>
+                                    <span>{{item.location}}</span>
+                                </v-col>
+                                <v-col>
+                                    <span>{{item.start}}</span>
+                                </v-col>
+                                <v-col>
+                                    <span>{{item.end}}</span>
+                                </v-col>
+                            </v-row>
+                        </v-card>
+                    </v-col>
+                </template>
+            </v-row>
+        </v-card>
+    </v-col>
+</v-row>
+
+<!-- Add Activity -->
+    <v-dialog v-model="dialog" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5 ml-2 font-weight-bold">新建活动</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row class="mx-auto">
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="名称" v-model="input.name">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="活动地点" v-model="input.loc">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="开始时间" v-model="input.start">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined dense label="结束时间" v-model="input.end">
+                        </v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row class="mx-1">
+                    <v-textarea filled clearable dense label="活动简介" auto-grow row="2"
+                        v-model="input.info"
+                    ></v-textarea>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="dialog=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="addEvent();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
 
 </v-container>
 </template>
@@ -76,43 +195,43 @@ export default {
   data: () => ({
         time:Vue.prototype.$SYSTIME,
         today:Vue.prototype.$TODAY,
-        events: Vue.prototype.$EVENTS,
-        focus: '',
-        selectedEvent: {},
-        selectedElement: null,
-        selectedOpen: false,
+        user:Vue.prototype.$USER,
+        events: Vue.prototype.$EVENTS.data,
+        // {"id",stoi(id)},
+        // {"name",name.c_str()},
+        // {"start",start.c_str()},
+        // {"end",end.c_str()},
+        // {"loc",location.c_str()},
+        // {"info",info.c_str()}
+        event_type:0,
+        dialog:false,
+        input:{name:'',start:'',end:'',loc:'',info:''},
     }),
     methods: {
         getColor(event){return event.color;},
-        setToday(){
-            this.focus = this.today = Vue.prototype.$TODAY;
-            this.$refs.calendar.scrollToTime('07:30');
-        },
-        prev(){this.$refs.calendar.prev();},
-        next(){this.$refs.calendar.next();},
-        showEvent ({ nativeEvent, event }) {
-            const open = ()=>{
-                this.selectedEvent = event
-                this.selectedElement = nativeEvent.target
-                requestAnimationFrame(() => requestAnimationFrame(() => this.selectedOpen = true))
-            }
-            if(this.selectedOpen){
-                this.selectedOpen = false
-                requestAnimationFrame(() => requestAnimationFrame(() => open()))
+        addEvent(){
+            var min,max; var all = 1;
+            if(this.event_type == 0){
+                min = this.user.id * 1000;   max = min + 999;
             }else{
-                open()
+                min = 0;    max = 10000;
             }
-            nativeEvent.stopPropagation()
-        },
-    },
-    activated() {
-        this.setToday();
-    },
-    mounted(){
-        this.setToday();
+            for(var i=0;i < this.events.length;i++){
+                if(this.events[i].id > min && this.events[i].id < max) all++;
+            }
+            var detail = (min + all)+ ",";
+            detail +=  this.input.start + "," + this.input.end + "," 
+                    +this.input.loc + "," + this.input.name + "," +this.input.info;
+            console.log(detail);
+            this.$post('/api/event',detail,'','new',()=>{
+                this.$getEvents();
+                this.dialog = false;
+            },(res)=>{console.log(res.headers.msg)},()=>{});
+        }
+
     },
     created(){
-        this.setToday();
+
     }
 }
 </script>

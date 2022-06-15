@@ -47,6 +47,7 @@ function PostWithToken(Url,Val,Param,Function,NoErrFuncton,ErrFunction,ExpFuncti
         if(res.headers.msg == "NO_ERROR"){
             NoErrFuncton(res);
         }else{
+            console.log(res.headers.msg);
             ErrFunction(res);
         }
     })

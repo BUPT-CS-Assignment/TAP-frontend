@@ -97,7 +97,7 @@
                                     <span class="text-subtitle-2 grey--text mr-10">开始时间 {{item.start}}</span>
                                     <span class="text-subtitle-2 grey--text ">截止时间 {{item.end}}</span>
                                     <v-btn v-if="user.auth != 2" style="position:absolute;right:2%;top:20%;"
-                                        @click="upload_file = true" text  rounded 
+                                        @click="upload_file = true;homework_choose = item.id;" text  rounded 
                                     ><v-icon medium color="grey">mdi-upload-multiple</v-icon>
                                     </v-btn>
                                 </v-card>
@@ -169,7 +169,7 @@
                 </v-btn>
                 <v-btn color="blue darken-1 font-weight-bold" text
                     @click="Upload();"
-                >Add
+                >Upload
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -194,6 +194,7 @@ export default {
         tab:null,
         homework_add:false,
         upload_file:false,
+        homework_choose:0,
         input:{ name:'',end:''},
         file:[],
     }),
@@ -237,8 +238,9 @@ export default {
                 },"getwork",(res)=>{
                     this.course.homework=[];
                     var data = res.data.homework;
-                    for(var i = 0;i<data.length;i++){
+                    for(var i = 0;i< data.length;i++){
                         var tempwork={
+                            id:data[i].start,
                             name:data[i].name,
                             start:this.$timeFormat(data[i].start),
                             end:this.$timeFormat(data[i].end)
@@ -248,7 +250,15 @@ export default {
             },()=>{},()=>{});
         },
         Upload(){
-
+            var filepath = this.course.id + "/"+this.course.profid + "/"+ this.course.class 
+                            + "/" + this.homework_choose + "/";
+            var param = new FormData();
+            param.append('file',this.file);
+            param.append('filepath',filepath)
+            this.$post('/api/homework',param,'','',()=>{
+                alert("上传成功");
+                this.upload_file = false;
+            },(res)=>{alert(res)},()=>{});
         },
     },
 

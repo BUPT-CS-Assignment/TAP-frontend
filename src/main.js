@@ -133,6 +133,16 @@ function day_format(tcode){
     return format;
 }
 
+function time_format(time){
+    //202206150814
+    var format = time.substring(0,4)+"/"
+    format += time.substring(4,6)+"/"
+    format += time.substring(6,8)+" "
+    format += time.substring(8,10)+":"
+    format += time.substring(10,12);
+    return format;
+}
+
 function getTable(url,classid){
     this.$get(url,{'classid':classid},'timetable',(res)=>{
         console.log(res);
@@ -163,14 +173,15 @@ function getEvents(){
         events.data=[];
         res.data.events.forEach(element => {
             //202201010800
-            var time = element.start + "";
-            element.start = time.substring(0,4) + "-" + time.substring(4,6) + "-" + time.substring(6,8) 
-                        + " " + time.substring(8,10) + ":" + time.substring(10,12);
-            time = element.end + "";
-            element.end = time.substring(0,4) + "-" + time.substring(4,6) + "-" + time.substring(6,8) 
-                        + " " + time.substring(8,10) + ":" + time.substring(10,12);
+            var new_event={
+                id:Number(element.id),
+                name:element.name,
+                start:time_format(element.start),
+                end:time_format(element.end),
+                location:element.loc,
+                info:element.info,
+            }
             var num = Math.floor(Math.random() * (colors.length - 1));
-            var new_event = element;
             new_event.color = colors[num];
             events.data.push(new_event);
         });
@@ -264,16 +275,6 @@ function getTime(){
     .catch(err => {
         console.log(err);
     })
-}
-
-function time_format(time){
-    //202206150814
-    var format = time.substring(0,4)+"/"
-    format += time.substring(4,6)+"/"
-    format += time.substring(6,8)+" "
-    format += time.substring(8,10)+":"
-    format += time.substring(10,12);
-    return format;
 }
 
 function Signout(){

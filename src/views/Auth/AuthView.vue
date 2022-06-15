@@ -168,7 +168,21 @@ export default {
                 })
         },
         signup:function(){
-            console.log('Sign up');
+            var patrn=/^(\w){3,16}$/;  
+            if (!patrn.exec(this.passwd)){
+                alert('密码位3-16位字母、数字或下划线组合');
+                return;
+            }
+            if(this.passwd != this.confirm){       
+                alert('两次输入不一致');
+                return;
+            }
+            this.$post('/api/signup',this.passwd,{'userid':this.userid},'',()=>{
+                this.userid = '';
+                this.passwd = '';
+                this.confirm = '';
+                alert('注册成功,等待管理员确认院系信息')
+            },()=>{},()=>{});
         },
         init:function(){
             this.$getUser();
