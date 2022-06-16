@@ -35,16 +35,16 @@ var introduction={
 }
 
 var events={data:[]};
-
-var sys_time={year:2022,month:1,day:1,hour:0,min:0,ratio:1,runID:0};
+var notice_table={data:[],id:0};
+//id:0,show:false,name:'',time:0,timeout:-1
+var sys_time={year:2022,month:1,day:1,hour:0,min:0,sec:0,week:0,ratio:1,runID:0};
 var sys_today="2022-01-01";
 
 var month_day=[0,31,28,31,30,31,30,31,31,30,31,30,31];
 
-var colors=['blue', 'indigo', 'green','orange', 'blue-grey'];
+// var colors=['blue', 'indigo', 'green','orange', 'blue-grey'];
 
 var course_list={data:[{id:'000',name:'course'}]}
-var course_item={data:['1201,course']}
 
 var course_choose = 0;
 
@@ -55,8 +55,9 @@ Vue.prototype.$EVENTS=events
 Vue.prototype.$SYSTIME=sys_time
 Vue.prototype.$TODAY=sys_today
 Vue.prototype.$COURSELIST = course_list
-Vue.prototype.$COURSEITEM = course_item
 Vue.prototype.$COURSECHOOSE = course_choose
+Vue.prototype.$NOTICE = notice_table
+Vue.prototype.$SHOWNOTICE={flag:false}
 
 /**
  * Global Function
@@ -185,6 +186,7 @@ function getTable(url,classid){
 
 function getEvents(){
     this.$get('/api/event','','fetch',(res)=>{
+
         events.data=[];
         res.data.events.forEach(element => {
             //202201010800
@@ -193,18 +195,82 @@ function getEvents(){
             if(element.end <= now) sta = '已结束';
             else if(element.start > now) sta = '未开始';
             else sta = '进行中'
+            //new event 
             var new_event={
                 id:Number(element.id),
                 name:element.name,
+                start_num:Number(element.start),
+                end_num:Number(element.end),
                 start:time_format(element.start),
                 end:time_format(element.end),
                 location:element.loc,
                 info:element.info,
-                status:sta
+                status:sta,
+                ncode:element.notice,
             }
-            var num = Math.floor(Math.random() * (colors.length - 1));
-            new_event.color = colors[num];
+
+            //notice
             events.data.push(new_event);
+            var ncode = element.notice;
+            var notice={
+                mul:ncode & 0x1, day:[], time:0,
+            }
+
+            if(ncode == 0 || element.start < now){
+                notice={}
+            }else{
+                ncode >>= 1;
+                for(var i =0;i<7;i++){
+                    if(ncode & 0x1 == 1){
+                        notice.day.push(i);
+                    }
+                    ncode >>= 1
+                }
+                for(var j = 0;j<24;j++){
+                    if(ncode & 0x1 == 1){
+                        notice.time = j;
+                        break;
+                    }
+                    ncode >>= 1;
+                }
+
+
+                if(notice.mul){
+                    for(var k = 0;k < notice.day.length;k++){
+                        if(notice.day[k]+1 == sys_time.week){
+                            if(!notice_table.data.find(res=>{
+                                if(res.id == element.id) return true;
+                            })){
+                                notice_table.data.push({
+                                    id:Number(element.id),
+                                    name:element.name,
+                                    time:notice.time,
+                                    is_judge:false,
+                                }) 
+                            }
+                        }
+                    }
+                }else{
+                    //202206161200
+                    var start_day = ((parseInt(new_event.start_num/10000)%100) - notice.day[0]) 
+                        % month_day[sys_time.month - 1];
+                    console.log(start_day);
+                    if(start_day == sys_time.day){
+                        if(!notice_table.data.find(res=>{
+                            if(res.id == element.id) return true;
+                        })){
+                            notice_table.data.push({
+                                id:Number(element.id),
+                                name:element.name,
+                                time:notice.time,
+                                is_judge:false,
+                            }) 
+                        }
+                            
+                    }
+                }
+            }
+            noticeRun();
         });
     },()=>{},()=>{});
     return true;
@@ -226,7 +292,32 @@ function date_format(){
     Vue.prototype.$TODAY = sys_today;
 }
 
+function noticeJudge(){
+    //yyyymmddhhmm
+    console.log("judging");
+    for(var i = 0;i<notice_table.data.length;i++){
+        // var event_time = events.data[i].start_num;
+        if(notice_table.data[i].time > sys_time.hour){
+            notice_table.data[i].show = false;
+        }else if(!notice_table.data[i].is_judge && notice_table.data[i].time == sys_time.hour){
+            notice_table.data[i].show = true;
+            Vue.prototype.$SHOWNOTICE.flag = true;
+            notice_table.data[i].timeout = -1;
+            notice_table.data[i].is_judge = true;
+        }
+    }
+    console.log(notice_table);
+}
+
+function noticeRun(){
+    noticeJudge();
+    clearInterval(notice_table.id);
+    notice_table.id = setInterval(noticeJudge,60000 / sys_time.ratio);
+}
+
 function timeAdd(){
+    if(++ sys_time.sec < 60) return;
+    sys_time.sec = 0;
     if(++ sys_time.min < 60) return;
     sys_time.min = 0;
     if( ++ sys_time.hour < 24) return;
@@ -241,7 +332,7 @@ function timeAdd(){
 
 function timeRun(){
     clearInterval(sys_time.runID);
-    sys_time.runID = setInterval(timeAdd,60000 / sys_time.ratio);
+    sys_time.runID = setInterval(timeAdd,1000 / sys_time.ratio);
 }
 
 function timeUpdate(data){
@@ -251,8 +342,11 @@ function timeUpdate(data){
     sys_time.day = data.day;
     sys_time.hour = data.hour;
     sys_time.min = data.min;
+    sys_time.sec = data.sec;
+    sys_time.week = data.week;
     console.log(sys_time);
     timeRun();
+    if(user.auth < 3)   noticeRun();
 }
 
 function ratioScan(){

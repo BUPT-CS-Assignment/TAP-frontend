@@ -43,10 +43,12 @@
             <v-container fluid class="px-6">
                 <v-row class="mx-auto">
                     <v-col cols="8">
-                        <v-combobox v-model="input.id"
+                        <v-select v-model="input.id"
                         :items="courses.data"
-                        outlined dense label="Course ID"
-                        ></v-combobox>
+                        item-value="id"
+                        item-text="name"
+                        outlined dense label="Course"
+                        ></v-select>
                     </v-col>
                     <v-col cols="4">
                         <v-text-field outlined dense label="Professor ID" v-model="input.prof">
@@ -66,6 +68,10 @@
                     </v-col>
                      <v-col cols="4">
                         <v-text-field outlined dense label="Room" v-model="input.room">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-text-field outlined dense label="Contact" v-model="input.contact">
                         </v-text-field>
                     </v-col>
                 </v-row>
@@ -194,7 +200,7 @@ export default {
     data: () => ({
         time:Vue.prototype.$SYSTIME,
         user:Vue.prototype.$USER,
-        courses:Vue.prototype.$COURSEITEM,
+        courses:Vue.prototype.$COURSELIST,
         list:[{id:1001,school:313}],
         table:Vue.prototype.$TABLE,
         new_class:{id:100,school:313},
@@ -205,7 +211,7 @@ export default {
         day_select:0,
         class_select:0,
         day_items:['Mon.','Tue.','Wed.','Thur.','Fir.'],
-        input:{id:'',prof:0,day:[0,0,0,0,0],location:0,room:0}, 
+        input:{id:'',prof:0,day:[0,0,0,0,0],location:0,room:0,contact:0}, 
         DayTime:[{t:false},{t:false},{t:false},{t:false},{t:false},
               {t:false},{t:false},{t:false},{t:false},{t:false},
               {t:false},{t:false},{t:false},{t:false},],
@@ -238,16 +244,15 @@ export default {
         },
         newCourse:function(){
             // input:{classid:0,prof:0,day:[0,0,0,0,0],location:0,room:0}, 
-            var course = this.input.id.substring(0,this.input.id.indexOf(","));
             var detail = "";
             for(var i = 0 ;i < 5; i++){
                 detail += this.input.day[i]+",";
             }
-            detail += this.input.location + "," + this.input.room;
+            detail += this.input.location + "," + this.input.room + "," + this.input.contact;
             console.log(detail);
             this.$post('/api/class',detail,
                 {'classid':this.class_select,
-                 'course':course,
+                 'course':this.input.id,
                  'prof':this.input.prof,
                 },
                 "course",()=>{

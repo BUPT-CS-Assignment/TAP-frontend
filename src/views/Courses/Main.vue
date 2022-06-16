@@ -5,7 +5,7 @@
     <template v-for="(item,index) in table.courses">
     <v-row v-if="index!=0" :key="index">
         <v-col cols="12">
-            <v-card elevation="4" rounded="lg" class="mx-4" @click="skip(index)">
+            <v-card elevation="4" rounded="lg" class="mx-4" @click="step(index)">
                 <v-card-title>
                     <v-icon color="red lighten-1" class="mr-3">mdi-bank</v-icon>
                     <span class="blue-grey--text text-subtitle-1 font-weight-bold">{{item.name}}</span>
@@ -68,7 +68,7 @@
             </v-col>
             <v-col>
                 <span class="blue-grey--text font-weight-bold">课程群</span>
-                1000083
+                <br>{{course.contact}}
             </v-col>
         </v-row>
     </v-card>
@@ -270,7 +270,7 @@
                     <v-col>
                         <v-file-input label="Upload File" v-model="file"
                             show-size small-chips counter
-                            accept="image/*,.pdf,.doc,.docx,.ppt,.pptx"
+                            accept="image/*,.pdf,.doc,.docx,.ppt,.pptx,.txt"
                         ></v-file-input>
                     </v-col>
                 </v-row>
@@ -310,7 +310,7 @@ export default {
         upload_type:0, //0 for homework, 1 for resource
         homework_choose:0,
         input:{ name:'',end:'',filename:''},
-        file:[],
+        file:'',
     }),
     created() {
         this.getIntro();
@@ -319,6 +319,9 @@ export default {
         this.getExam();
     },
     methods: {
+        step(id){
+            Vue.prototype.$COURSECHOOSE = id;
+        },
         getIntro(){
             if(this.id != 0){
                 this.$get('/api/course',{'courseid':this.table.courses[this.id].id},"intro",
@@ -408,19 +411,58 @@ export default {
             },()=>{},()=>{});
         },
         Upload(){
+            if(this.user.auth == 2) this.upload_type = "1";
+            else this.upload_type = "0";
             var filepath = this.course.id + "/"+this.course.profid + "/";
             var param = new FormData();
             if(this.upload_type == 0){
                 filepath += this.course.class + "/" + this.homework_choose + "/";
             }
             param.append('file',this.file);
-            param.append('type',this.upload_type+"");
-            param.append('filepath',filepath)
-            param.append('filename',this.input.filename);
-            this.$post('/api/file',param,'','',()=>{
-                alert("上传成功");
-                this.upload_file = false;
-            },(res)=>{alert(res)},()=>{});
+
+
+            // this.$http({
+            //     method:'POST',
+            //     url:'/api/file',
+            //     headers:{
+            //         'token':localStorage.getItem('token'),
+            //         'userid':localStorage.getItem('userid')
+            //     },
+            //     body:param,
+            // }).then((res)=>{
+            //     console.log(res);
+            //     if(res.headers.msg == "NO_ERROR"){
+            //         this.getResource();
+            //         this.upload_file=false;
+            //     }else{
+            //         console.log(res);
+            //         alert('上传失败')
+            //     }
+            // }).catch((res)=>{console.log(res)})
+            
+            fetch('/api/file',{ 
+                method:'POST',
+                headers:{
+                    'token':localStorage.getItem('token'),
+                    'userid':localStorage.getItem('userid'),
+                    'upload_type':this.upload_type,
+                    'upload_path':filepath,
+                    'upload_name':this.input.filename,
+                },
+                body:param,
+            }).then(res=>{
+                var msg = res.headers.get('msg');
+                if(msg == "NO_ERROR"){
+                    this.getResource();
+                    this.upload_file=false;
+                }else{
+                    alert('上传失败.'+msg);
+                }
+                return res.json
+                
+            }).then(res=>{
+                console.log(res);
+            })
         },
         download(index){
             var filepath = "course/" + this.course.id + "/" + this.course.profid +"/res/"

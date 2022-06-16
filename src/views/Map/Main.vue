@@ -1,29 +1,58 @@
 <template>
-<v-container>
-    <div class="command">
-		<select v-model="selectedSrc">
-			<option disabled value="">请选择起始地点</option>
-			<option v-for="item in this.listData" :key="item.id" :value="item">{{item.name}}</option>
-		</select>
-		<select v-model="selectedDst">
-			<option disabled value="">请选择目的地点</option>
-			<option v-for="item in this.listData" :key="item.id" :value="item">{{item.name}}</option>
-		</select>
+<v-container class="ml-8 mt-4">
+    <v-toolbar dense floating style="z-index:2;position:absolute;left:50px;top:30px;" rounded="xl">
+        <v-btn class="ma-0 pa-0" rounded text small 
+            @click="shownav = !shownav"
+        ><v-icon color="grey darken-2">mdi-crosshairs-gps</v-icon>
+        </v-btn>
+        <template v-if="shownav">
+        <!-- <v-container> -->
+        <v-chip dense class="ml-2">
+        <select v-model="selectedSrc">
+            <option disabled value="">起始地点</option>
+            <option v-for="item in this.list.data" :key="item.id" :value="item">{{item.name}}</option>
+        </select>
+        </v-chip>
 
-		<label><input type="radio" v-model="qmode" value="0"/>距离最短</label>
-		<label><input type="radio" v-model="qmode" value="1"/>时间最短</label>
-		<label><input type="radio" v-model="qmode" value="2"/>使用骑行</label>
+        <v-icon class="ml-1" color="blue">mdi-arrow-right</v-icon>
 
-		<button @click="submitPos">Click Here to Submit</button>
-		<button @click="animePlay">Click Here to Play</button>
-		<button @click="changeMap">Click Here to ChangeMap</button>
-		<button @click="changeRoute">Click Here to ChangeRoute</button>
-	</div>
-	<div 
-		class="map" 
+        <v-chip dense class="ml-1">
+            <select v-model="selectedDst">
+                <option disabled value="">目的地点</option>
+                <option v-for="item in this.list.data" :key="item.id" :value="item">{{item.name}}</option>
+            </select>
+        </v-chip>
+
+        <v-chip dense class="mx-2" color="blue lighten-3">
+            <select v-model="qmode">
+                <option disabled value="">导航方式</option>
+                <option v-for="item in this.function" :key="item.id" :value="item.id">{{item.name}}</option>
+            </select>
+        </v-chip>
+
+        <!-- <label><input type="radio" v-model="qmode" value="0"/>距离最短</label>
+        <label><input type="radio" v-model="qmode" value="1"/>时间最短</label>
+        <label><input type="radio" v-model="qmode" value="2"/>使用骑行</label> -->
+
+        <v-btn @click="submitPos" text small rounded class="font-weight-bold">计算</v-btn>
+        <v-btn @click="animePlay" text small rounded class="font-weight-bold">动画</v-btn>
+        <v-btn @click="changeMap" text small rounded class="font-weight-bold">校区</v-btn>
+        <v-btn @click="changeRoute" text small rounded class="font-weight-bold">路径</v-btn>
+        <!-- </v-container> -->
+        </template>
+    </v-toolbar>
+	<v-card 
+		class="map pa-2" rounded="lg" elevation="6" 
 		:class="{map2 : MapT}"
-		@click="getMouseXY($event)">
-		<div class="block"> </div>
+		@click="getMouseXY($event)"
+        :min-width="MapT?750:1050"
+        
+        justify="center"
+    >
+        
+		<div class="block">
+            <v-icon color="red">mdi-circle</v-icon>
+        </div>
 
 		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" v-bind:viewBox="this.MapT ? this.size2 : this.size1">
 			<path 
@@ -32,18 +61,19 @@
 				stroke="blue" 
 				stroke-width="10"></path>
 		</svg>
-	</div>
+	</v-card>
 </v-container>
 </template>
 
 <script>
 // @ is an alias to /src
-import anime from 'animejs/lib/anime.es.js';
+import anime from 'animejs/lib/anime.es';
 const PixelRate = 10;
 
 export default {
   name: 'MapView',
     data: () => ({
+        shownav:true,
         MapT   : false ,
 		qmode  : 0 ,
 
@@ -52,7 +82,8 @@ export default {
 
 		selectedSrc : {} ,
 		selectedDst : {} , 
-		listData : [] ,
+        function:[{id:0,name:'最短距离'},{id:1,name:'最短时间'},{id:2,name:'骑行'}],
+		list:{data:[]} ,
 		Posel  : 0 ,
 		map1 : 0 ,
 		map2 : 0 ,
@@ -64,7 +95,18 @@ export default {
 		Path2Data : "",
 		Path3Data : "",
 		Path4Data : "",
-    }),methods: {
+    }),
+    mounted() {
+        this.$get('/api/map',{'action':'q'},'',()=>{},(res)=>{
+            this.list.data = [];
+            this.list.data = res.data.data;
+            console.log(this.list);
+            // res.data.data.forEach(element=>{
+            //     this.listData.push(element);
+            // })
+        },()=>{});
+    },
+    methods: {
         submitPos () {
             if (this.Posel == 0) {
                 this.pos1.x = this.selectedSrc.x , this.pos1.y = this.selectedSrc.y;
@@ -85,7 +127,7 @@ export default {
                         x2 : this.pos2.x ,
                         y2 : this.pos2.y ,
                         action : raction
-                },'',(res)=>{
+                },'',()=>{},(res)=>{
                     res.data.path1.forEach((element , idx) => {
                             if(idx == 0) {
                                 this.Path1Data  = "M" + element.x *PixelRate + " " + element.y *PixelRate + " ";
@@ -128,7 +170,7 @@ export default {
                                 [this.Path2Data , this.Path4Data] = [this.Path4Data , this.Path2Data];						
                             }
                         }
-                    },()=>{},()=>{});
+                    },()=>{});
                 this.Posel = 0;
             }
         },
@@ -175,16 +217,6 @@ export default {
 
 <style scoped>
 
-.command {
-	position:fixed;
-	left :70px;
-	bottom: 50px;
-	width: 1000px;
-	height :100px;
-	border-radius: 10px;
-	background-color: grey;
-}
-
 .map {
 	width: 1050px;
 	height: 650px;
@@ -200,8 +232,8 @@ export default {
 	background-repeat:no-repeat;
 }
 .block {
-	width: 20px;
-	height: 20px;
-	background-color: red;
+    width:20px;
+    height:20px;
+	background:none;
 }
 </style>

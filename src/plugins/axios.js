@@ -8,6 +8,7 @@ axios.defaults.baseURL='/api';
 Vue.prototype.$get=GetWithToken;
 Vue.prototype.$post=PostWithToken;
 
+
 function GetWithToken(Url,Param,Function,NoErrFunction,ErrFunction,ExpFunction){
     axios.get(Url,{
         params:Param,

@@ -14,7 +14,7 @@
             </v-toolbar>
             <v-row class="px-4 pt-4">
                 <template v-for="(item,index) in events.data">
-                    <v-col v-if="item.id < 10000" :key="index">
+                    <v-col v-if="item.id < 10000" :key="index" cols="12">
                         <v-card elevation="0" class="px-2">
                             <v-row>
                                 <v-col cols="3">
@@ -28,7 +28,11 @@
                                         </template>
                                         <v-card min-width="100" min-height="100" max-width="300" rounded="lg" 
                                             class="pa-3" elevation="3"
-                                        >   <span class="font-weight-bold mr-4">地点</span>
+                                        >   <template v-if="item.ncode!=0">
+                                            <span class="font-weight-bold mr-4">提醒</span>
+                                            <span>{{item.ncode}}</span><br>
+                                            </template>
+                                            <span class="font-weight-bold mr-4">地点</span>
                                             <span>{{item.location}}</span><br>
                                             <span class="font-weight-bold mr-4 mt-2">详情</span>
                                             <span>{{item.info}}</span>
@@ -47,6 +51,10 @@
                                 </v-col>
                                 <v-col cols="3">
                                     <span class="font-weight-bold green--text">{{item.status}}</span>
+                                    <v-btn v-if="user.auth==1 && item.status=='未开始'" text rounded small @click="notice.id=item.id;notice_set=true">
+                                        <v-icon small text color="grey">mdi-bell-ring</v-icon>
+                                    </v-btn>
+                                    
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -71,7 +79,7 @@
             </v-toolbar>
             <v-row class="px-4 pt-4">
                 <template v-for="(item,index) in events.data">
-                    <v-col v-if="item.id > 10000" :key="index">
+                    <v-col v-if="item.id > 10000" :key="index" cols="12">
                         <v-card elevation="0" class="px-2">
                             <v-row>
                                 <v-col cols="3">
@@ -85,7 +93,11 @@
                                         </template>
                                         <v-card min-width="100" min-height="100" max-width="300" rounded="lg" 
                                             class="pa-3" elevation="3"
-                                        >   <span class="font-weight-bold mr-4">地点</span>
+                                        >   <template v-if="item.ncode!=0">
+                                            <span class="font-weight-bold mr-4">提醒</span>
+                                            <span>{{item.ncode}}</span><br>
+                                            </template>
+                                            <span class="font-weight-bold mr-4">地点</span>
                                             <span>{{item.location}}</span><br>
                                             <span class="font-weight-bold mr-4 mt-2">详情</span>
                                             <span>{{item.info}}</span>
@@ -104,6 +116,10 @@
                                 </v-col>
                                 <v-col cols="3">
                                     <span class="font-weight-bold green--text">{{item.status}}</span>
+                                    <v-btn  v-if="item.status=='未开始'"  text rounded small @click="notice.id=item.id;notice_set=true">
+                                        <v-icon small text color="grey">mdi-bell-ring</v-icon>
+                                    </v-btn>
+                                    
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -157,6 +173,56 @@
         </v-card>
     </v-dialog>
 
+    <v-dialog v-model="notice_set" persistent max-width="600px">
+        <v-card class="px-2 pt-6 pb-2 rounded-lg">
+            <v-card-title class="text-h5 ml-2 font-weight-bold">活动提醒</v-card-title>
+            <v-container fluid class="px-6">
+                <v-row class="mx-auto">
+                    <v-col cols="4">
+                        <v-switch v-model="notice.mul" label="周期">
+                        </v-switch>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-select
+                            :items="time_items"
+                            label="提醒时间"
+                            outlined
+                            v-model="notice.time"
+                            ></v-select>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-row v-if="notice.mul">
+                            <v-col v-for="(item,index) in notice.week" :key="index" cols="3">
+                                <v-checkbox v-model="item.t"
+                                    :label="notice.mul?week_items[index]:'提前'+(index+1)+'天'"
+                                ></v-checkbox>
+                            </v-col>
+                        </v-row>
+                        <v-row v-else>
+                            <v-radio-group v-model="notice.offset" row>
+                                <v-radio v-for="item in [0,1,2,3,4]" :key="item"
+                                    :value="item"
+                                    :label="offset_items[item]"
+                                ></v-radio>
+                            </v-radio-group>
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-container>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text
+                    @click="notice_set=false"
+                >Cancel
+                </v-btn>
+                <v-btn color="blue darken-1 font-weight-bold" text
+                    @click="addNotice();"
+                >Add
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
 
 </v-container>
 </template>
@@ -180,6 +246,20 @@ export default {
         // {"info",info.c_str()}
         event_type:0,
         dialog:false,
+        notice_set:false,
+        week_items:['星期一','星期二','星期三','星期四','星期五','星期六','星期天'],
+        offset_items:['当天','提前1天','提前2天','提前3天','提前4天','提前5天'],
+        time_items:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+        notice:{
+            id:0,
+            mul:false,
+            week:[{t:false},{t:false},{t:false},{t:false},{t:false},{t:false},{t:false}],
+            offset:0,
+            time:0,
+        },
+        time_code:[{t:false},{t:false},{t:false},{t:false},{t:false},
+                    {t:false},{t:false},{t:false},{t:false},{t:false},
+                    {t:false},{t:false},{t:false},{t:false},{t:false}],
         input:{name:'',start:'',end:'',loc:'',info:''},
     }),
     methods: {
@@ -195,11 +275,29 @@ export default {
                 if(this.events.data[i].id > min && this.events.data[i].id < max) all++;
             }
             var detail = (min + all)+ ",";
-            detail +=  this.input.start + "," + this.input.end + "," 
+            detail +=  this.input.start + "," + this.input.end + ",0," 
                     +this.input.loc + "," + this.input.name + "," +this.input.info;
             this.$post('/api/event',detail,'','new',()=>{
                 this.$getEvents();
                 this.dialog = false;
+            },(res)=>{console.log(res.headers.msg)},()=>{});
+        },
+        addNotice(){
+            var code7=0;
+            if(this.notice.mul){
+                for(var i = 0;i<7;i++){
+                    if(this.notice.week[i]) code7 += 1 << i;
+                }
+            }else   code7 = 1 << this.notice.offset
+            var code32=0;
+            if(this.notice.mul) code32 += 1;
+            code32 += (code7 << 1);
+            code32 += (1 << (this.notice.time + 8));
+            console.log(code32);
+            this.$post('/api/event',code32,{'eventid':this.notice.id},'notice',()=>{
+                this.$getEvents();
+                alert("设置提醒成功")
+                this.notice_set = false;
             },(res)=>{console.log(res.headers.msg)},()=>{});
         }
 

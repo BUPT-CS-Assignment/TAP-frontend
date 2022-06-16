@@ -230,10 +230,6 @@ export default {
         getList(){
             this.$get('/api/course','','list',(res)=>{
                 Vue.prototype.$COURSELIST.data=res.data.data;
-                Vue.prototype.$COURSEITEM.data=[];
-                for(var i = 0; i < res.data.data.length;i++){
-                    Vue.prototype.$COURSEITEM.data.push(res.data.data[i].id+','+res.data.data[i].name);
-                }
             },()=>{},(res)=>{alert(res.status)})
         },
         setWeek(){

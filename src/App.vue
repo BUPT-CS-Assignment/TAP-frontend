@@ -155,6 +155,9 @@
                 <v-icon class="ml-3" small>mdi-text-long</v-icon>
                 </v-btn>  -->
         </v-container>
+        <v-btn text rounded small @click="show.flag=!show.flag;">
+            <v-icon small color="grey darken-2">mdi-bell-ring</v-icon> 
+        </v-btn>
         <v-menu
             bottom
             min-width="140px"
@@ -195,6 +198,42 @@
             </v-list-item-content>
             </v-card>
         </v-menu>
+
+        <v-card  :style="show.flag?'':'display:none'"
+            class="pa-2" style="position:absolute;top:50px;right:20px;background:none;"
+            elevation="0" width="420" min-height="100" rounded="lg"
+
+        >
+            <v-row>
+                <template v-for="(item,index) in notice.data">
+                <v-col v-if="item.show" cols="12" :key="index">
+                    <v-card  class="pa-2 mr-0" width="400" color="blue lighten-5" elevation="4" rounded="lg">
+                        <v-card-title color="blue darken-3" class="my-1 py-0 text-body-1">
+                            <span class="blue--text text--darken-3">
+                            活动提醒: <strong class="mr-2">{{item.name}}</strong>
+                            </span>
+                        </v-card-title>
+                            <v-btn color="grey" text rounded
+                                @click="$router.push('/schedule/events')"
+                            ><strong>查看</strong>
+                            </v-btn>
+                            <v-btn color="grey" text rounded
+                                @click="item.show = false;show.flag=false"
+                            ><strong>关闭</strong>
+                            </v-btn>
+
+                    </v-card>
+                
+                </v-col>
+                </template>
+            </v-row>
+
+        </v-card>
+
+        
+
+
+
     </v-app-bar>
     </template>
 
@@ -226,6 +265,8 @@
             ></router-view>
         </v-container>
     </v-main>
+
+     
 </v-app>
 </template>
 
@@ -240,6 +281,8 @@ export default {
         time:Vue.prototype.$SYSTIME,
         table:Vue.prototype.$TABLE,
         choose:Vue.prototype.$COURSECHOOSE,
+        notice:Vue.prototype.$NOTICE,
+        show:Vue.prototype.$SHOWNOTICE,
         links: [
             ['主页','/home','mdi-account-circle','info'],
             ['日程','/schedule','mdi-calendar-check','orange'],
@@ -254,7 +297,7 @@ export default {
         ],
     }),
     mounted() {
-        //Vue.prototype.$getTime();
+        //this.$getTime();
     },
     created(){
         var path = window.location.hash;
@@ -262,7 +305,7 @@ export default {
         var idx = path.indexOf('/');
         if(idx != -1)   path = path.substring(0,idx);
         this.cur_link = this.router_parse(path);
-        Vue.prototype.$getTime();
+        this.$getTime();
         if(!this.$access('0')){
             console.log('ACCESS_DENIED');
             this.$router.push('/auth');
