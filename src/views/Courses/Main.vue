@@ -5,7 +5,7 @@
     <template v-for="(item,index) in table.courses">
     <v-row v-if="index!=0" :key="index">
         <v-col cols="12">
-            <v-card elevation="4" rounded="lg" class="mx-4" @click="step(index)">
+            <v-card elevation="4" rounded="lg" class="mx-4">
                 <v-card-title>
                     <v-icon color="red lighten-1" class="mr-3">mdi-bank</v-icon>
                     <span class="blue-grey--text text-subtitle-1 font-weight-bold">{{item.name}}</span>
@@ -296,6 +296,7 @@
 <script>
 // @ is an alias to /src
 import Vue from 'vue'
+
 export default {
     name: "CourseView",
     data: () => ({
@@ -319,9 +320,6 @@ export default {
         this.getExam();
     },
     methods: {
-        step(id){
-            Vue.prototype.$COURSECHOOSE = id;
-        },
         getIntro(){
             if(this.id != 0){
                 this.$get('/api/course',{'courseid':this.table.courses[this.id].id},"intro",
@@ -485,11 +483,6 @@ export default {
                 dom.parentNode.removeChild(dom)
                 window.URL.revokeObjectURL(url)
             })
-            // window.open('http://101.43.201.20:10910/'+filepath);
-            // this.$get(,'','',()=>{},(res)=>{
-            //     
-
-            // },()=>{});
         },
     },
 

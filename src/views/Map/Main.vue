@@ -30,14 +30,11 @@
             </select>
         </v-chip>
 
-        <!-- <label><input type="radio" v-model="qmode" value="0"/>距离最短</label>
-        <label><input type="radio" v-model="qmode" value="1"/>时间最短</label>
-        <label><input type="radio" v-model="qmode" value="2"/>使用骑行</label> -->
-
         <v-btn @click="submitPos" text small rounded class="font-weight-bold">计算</v-btn>
         <v-btn @click="animePlay" text small rounded class="font-weight-bold">动画</v-btn>
         <v-btn @click="changeMap" text small rounded class="font-weight-bold">校区</v-btn>
         <v-btn @click="changeRoute" text small rounded class="font-weight-bold">路径</v-btn>
+        <v-btn @click="getNearlyBus" text small rounded class="font-weight-bold">班车</v-btn>
         <!-- </v-container> -->
         </template>
     </v-toolbar>
@@ -46,7 +43,6 @@
 		:class="{map2 : MapT}"
 		@click="getMouseXY($event)"
         :min-width="MapT?750:1050"
-        
         justify="center"
     >
         
@@ -109,6 +105,9 @@ export default {
     methods: {
         submitPos () {
             if (this.Posel == 0) {
+                this.map1 = Math.floor(this.selectedSrc.id / 10000) - 1;
+                this.map2 = Math.floor(this.selectedDst.id / 10000) - 1;
+
                 this.pos1.x = this.selectedSrc.x , this.pos1.y = this.selectedSrc.y;
                 this.pos2.x = this.selectedDst.x , this.pos2.y = this.selectedDst.y;
                 this.Posel = 2;
@@ -210,7 +209,18 @@ export default {
         } ,
         changeRoute() {
             this.Pathsel = !this.Pathsel;
-        }
+        },
+        getNearlyBus() {
+            this.$get('/api/map',{'action':'b','m':this.MapT ? 1 : 0 },'',()=>{},(res)=>{
+                let start_time = res.data.nears;
+
+                if (start_time.hour == -1) {
+                    alert("今天已经没有班车了QAQ");
+                } else {
+                    alert("最近的一辆班车为"+start_time.hour+":"+start_time.mins+" 请规划好时间，以防延误");
+                }
+            },()=>{});
+	}
     },
 }
 </script>

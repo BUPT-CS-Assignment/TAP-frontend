@@ -297,7 +297,7 @@ export default {
         ],
     }),
     mounted() {
-        //this.$getTime();
+        this.$getTime();
     },
     created(){
         var path = window.location.hash;

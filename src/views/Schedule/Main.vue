@@ -1,5 +1,6 @@
 <template>
 <v-container class="px-8 pt-4">
+<Search></Search>
 <v-row v-if="user.auth < 2">
     <v-col>
         <v-card min-height="200" rounded="lg" elevation="6">
@@ -52,9 +53,16 @@
                                 <v-col cols="3">
                                     <span class="font-weight-bold green--text">{{item.status}}</span>
                                     <v-btn v-if="user.auth==1 && item.status=='未开始'" text rounded small @click="notice.id=item.id;notice_set=true">
-                                        <v-icon small text color="grey">mdi-bell-ring</v-icon>
+                                        <template v-if="item.ncode == 0">
+                                            <v-icon small text color="grey">mdi-bell-plus</v-icon>
+                                        </template>
+                                        <template v-else>
+                                            <v-icon small text color="grey">mdi-bell-ring</v-icon>
+                                        </template>
                                     </v-btn>
-                                    
+                                    <v-btn  v-if="item.status=='未开始' && item.ncode!=0"  text rounded small @click="resetNotice(item.id)">
+                                        <v-icon small text color="grey">mdi-bell-off</v-icon>
+                                    </v-btn>
                                 </v-col>
                             </v-row>
                         </v-card>
@@ -117,7 +125,15 @@
                                 <v-col cols="3">
                                     <span class="font-weight-bold green--text">{{item.status}}</span>
                                     <v-btn  v-if="item.status=='未开始'"  text rounded small @click="notice.id=item.id;notice_set=true">
-                                        <v-icon small text color="grey">mdi-bell-ring</v-icon>
+                                        <template v-if="item.ncode == 0">
+                                            <v-icon small text color="grey">mdi-bell-plus</v-icon>
+                                        </template>
+                                        <template v-else>
+                                            <v-icon small text color="grey">mdi-bell-ring</v-icon>
+                                        </template>
+                                    </v-btn>
+                                    <v-btn  v-if="item.status=='未开始' && item.ncode!=0"  text rounded small @click="resetNotice(item.id)">
+                                        <v-icon small text color="grey">mdi-bell-off</v-icon>
                                     </v-btn>
                                     
                                 </v-col>
@@ -173,6 +189,7 @@
         </v-card>
     </v-dialog>
 
+<!-- Add Notice -->
     <v-dialog v-model="notice_set" persistent max-width="600px">
         <v-card class="px-2 pt-6 pb-2 rounded-lg">
             <v-card-title class="text-h5 ml-2 font-weight-bold">活动提醒</v-card-title>
@@ -230,7 +247,9 @@
 <script>
 // @ is an alias to /src
 import Vue from 'vue'
-
+import Search from '@/views/Schedule/Search.vue'
+const TIME_RANGE = 1000000;
+var time_bucket = new Array(TIME_RANGE).fill(0);
 export default {
   name: 'ScheduleMain',
   data: () => ({
@@ -262,8 +281,36 @@ export default {
                     {t:false},{t:false},{t:false},{t:false},{t:false}],
         input:{name:'',start:'',end:'',loc:'',info:''},
     }),
+    components:{
+        Search
+    },
     methods: {
-        getColor(event){return event.color;},
+        detectJudge(element){
+            if (time_bucket[Math.floor(element.start_num / 100) % TIME_RANGE] != 0) return false;
+            if (time_bucket[Math.floor(element.end_num   / 100) % TIME_RANGE] != 0) return false;
+
+            let tmp_bucket = time_bucket.slice(0);
+            tmp_bucket[Math.floor(element.start_num / 100) % TIME_RANGE] =  element.id;
+            tmp_bucket[Math.floor(element.end_num   / 100) % TIME_RANGE] = -element.id;
+
+            for (let i = 0 , preSum = 0; i < TIME_RANGE ; i++ ) {
+                if ((preSum > 0) && tmp_bucket[i] > 0) {
+                    return false;
+                }
+                
+                preSum += tmp_bucket[i];
+            }
+            time_bucket = tmp_bucket; 
+            return true;
+        },
+        isdetect(element){
+            for(var i = 0;i<this.events.data.length;i++){
+                this.detectJudge(this.events.data[i]);
+            }
+            var ret = this.detectJudge(element);
+            time_bucket.fill(0);
+            return ret;
+        },
         addEvent(){
             var min,max; var all = 1;
             if(this.event_type == 0){
@@ -273,6 +320,15 @@ export default {
             }
             for(var i=0;i < this.events.data.length;i++){
                 if(this.events.data[i].id > min && this.events.data[i].id < max) all++;
+            }
+            if(this.detectJudge(
+                {id:min+all,
+                start_num:Number(this.input.start),
+                end_num:Number(this.input.end),
+                }))
+            {
+                alert('活动时间冲突！');
+                return;
             }
             var detail = (min + all)+ ",";
             detail +=  this.input.start + "," + this.input.end + ",0," 
@@ -298,6 +354,12 @@ export default {
                 this.$getEvents();
                 alert("设置提醒成功")
                 this.notice_set = false;
+            },(res)=>{console.log(res.headers.msg)},()=>{});
+        },
+        resetNotice(id){
+            this.$post('/api/event','0',{'eventid':id},'notice',()=>{
+                this.$getEvents();
+                alert("取消提醒成功")
             },(res)=>{console.log(res.headers.msg)},()=>{});
         }
 

@@ -3,6 +3,7 @@ import './plugins/axios'
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
+import './plugins/qsort.js'
 
 Vue.config.productionTip = false
 
@@ -123,7 +124,6 @@ function day_format(tcode){
             }
             code >>= 1
         }
-        console.log(temp);
         if(temp != ""){
             temp = temp.substring(0,temp.length-1);
             temp += "节";
@@ -158,7 +158,6 @@ function time_string(){
 
 function getTable(url,classid){
     this.$get(url,{'classid':classid},'timetable',(res)=>{
-        console.log(res);
         timetable.courses = [{id:'null'}];
         tableInit();
         var courses = res.data.courses;
@@ -272,6 +271,9 @@ function getEvents(){
             }
             noticeRun();
         });
+        events.data.QSORT((res1,res2)=>{
+            return res1.start_num < res2.start_num ? true:false
+        })
     },()=>{},()=>{});
     return true;
 }
@@ -356,7 +358,7 @@ function ratioScan(){
         headers:{'content-type': 'multipart/form-data'}
     })
     .then(res => {
-        console.log(res);
+        // console.log(res);
         if(res.status == 200){
             console.log("Time Rate Change");
             getTime();
