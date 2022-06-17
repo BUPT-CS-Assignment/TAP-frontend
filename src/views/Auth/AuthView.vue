@@ -24,6 +24,24 @@
                 </v-icon>
                 Tiny & Pretty
             </span>
+            <v-btn rounded style="position:absolute;top:36px;right:15px;" class="px-0" text x-small depressed
+                onclick="window.open('https://github.com/NoUITeam/TinyAndPretty.git')"
+            >   <v-icon medium color="black">
+                    mdi-github
+                </v-icon>
+            </v-btn>
+            <v-btn rounded style="position:absolute;top:36px;right:55px;" class="px-0" text x-small depressed
+                onclick="window.open('https://github.com/Jianxff/NEDB.git')"
+            >   <v-icon medium color="black" >
+                    mdi-database
+                </v-icon>
+            </v-btn>
+            <v-btn rounded style="position:absolute;top:36px;right:95px;" class="px-0" text x-small depressed
+                onclick="window.open('https://github.com/Jianxff/TAP-frontend.git')"
+            >   <v-icon medium color="black" >
+                    mdi-vuejs
+                </v-icon>
+            </v-btn>
             <!-- d-none d-sm-none d-md-flex -->
             <v-img 
                 class="mx-auto mt-12"

@@ -23,7 +23,26 @@
                 {{time.hour}}:<template v-if="time.min < 10">0</template>{{time.min}}
             </span>
         </v-list-item>
-
+        <v-card class="d-flex flex-row-reverse justify-center mb-10" style="background:none;" elevation="0">
+            <v-btn class="mx-1" text rounded small depressed
+                onclick="window.open('https://github.com/NoUITeam/TinyAndPretty.git')"
+            >   <v-icon medium color="grey darken-1">
+                    mdi-github
+                </v-icon>
+            </v-btn>
+            <v-btn class="mx-1" text rounded small depressed
+                onclick="window.open('https://github.com/Jianxff/NEDB.git')"
+            >   <v-icon medium color="grey darken-1" >
+                    mdi-database
+                </v-icon>
+            </v-btn>
+            <v-btn class="mx-1" text rounded small depressed
+                onclick="window.open('https://github.com/Jianxff/TAP-frontend.git')"
+            >   <v-icon medium color="grey darken-1" >
+                    mdi-vuejs
+                </v-icon>
+            </v-btn>
+        </v-card>
     <v-divider class="mx-8 mt-0 mb-2"></v-divider>
     
         <v-list dense nav>
@@ -53,16 +72,7 @@
 
     <v-divider class="mx-8 mt-2 mb-6"></v-divider>
 
-        <v-list-item class="my-0 py-0 mx-3">
-            <v-text-field
-                outlined
-                prepend-inner-icon="mdi-magnify"
-                label="搜索"
-                dense
-                color="grey darken-1"
-                class="mb-0 pb-0"
-            ></v-text-field>
-        </v-list-item>
+    
     </v-navigation-drawer>  
     </template>   
 
