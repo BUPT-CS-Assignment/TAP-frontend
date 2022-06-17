@@ -92,14 +92,18 @@ export default {
 		Path3Data : "",
 		Path4Data : "",
     }),
+    created() {
+        this.$get('/api/map',{'action':'q'},'',()=>{},(res)=>{
+            this.list.data = [];
+            this.list.data = res.data.data;
+            console.log(this.list);
+        },()=>{});
+    },
     mounted() {
         this.$get('/api/map',{'action':'q'},'',()=>{},(res)=>{
             this.list.data = [];
             this.list.data = res.data.data;
             console.log(this.list);
-            // res.data.data.forEach(element=>{
-            //     this.listData.push(element);
-            // })
         },()=>{});
     },
     methods: {
