@@ -1,24 +1,20 @@
-# test
+# 界面预览 #
 
-## Project setup
-```
-npm install
-```
+## *使用说明详见pdf文件 ##
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 登录 ###
+![intro](./public/intro/intro_signin.jpg)
+### 用户信息 ###
+![intro](./public/intro/intro_info.jpg)
+### 课程表 ###
+![intro](./public/intro/intro_timetable.jpg)
+### 日程列表 ###
+![intro](./public/intro/intro_events.jpg)
+### 课程信息 ###
+![intro](./public/intro/intro_course.jpg)
+### 校园导航 ###
+![intro](./public/intro/intro_map.jpg)
+### 后台信息 ###
+![intro](./public/intro/intro_backstage_data.jpg)
+### 后台数据库 ###
+![intro](./public/intro/intro_backstage_db.jpg)
