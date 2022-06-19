@@ -1,6 +1,6 @@
 # 界面预览 #
 
-## *使用说明详见pdf文件 ##
+## **使用说明详见pdf文件** ##
 
 ### 登录 ###
 ![intro](./public/intro/intro_signin.jpg)
