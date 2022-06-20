@@ -3,6 +3,7 @@
 ## **使用说明详见pdf文件** ##
 
 ### 登录 ###
+**预览账号：2020212000 / 密码123**
 ![intro](./public/intro/intro_signin.jpg)
 ### 用户信息 ###
 ![intro](./public/intro/intro_info.jpg)
