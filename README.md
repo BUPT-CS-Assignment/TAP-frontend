@@ -1,6 +1,7 @@
-# 界面预览 #
+# TAP界面预览 #
+### 完整项目介绍请查看 [TinyAndPretty](https://github.com/BUPT-CS-Assignment/TinyAndPretty) ###
 
-## **使用说明详见pdf文件** ##
+**使用说明详见pdf文件**
 
 ### 登录 ###
 **预览账号：2020212000 / 密码123**
